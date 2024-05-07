@@ -2,8 +2,8 @@
 #include "02_Transmissions.h"
 
 #include <Wire.h>
-#include "src/definitions.h"
-#include "src/actionResults.h"
+#include "definitions.h"
+#include "actionResults.h"
 
 //|-------------------|
 //|   Transmissions   |

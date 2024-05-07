@@ -2,9 +2,9 @@
 #include "03_Actions.h"
 #include "04_Analog.h"
 
-#include "src/definitions.h"
-#include "src/actionResults.h"
-#include "settings.h"
+#include "definitions.h"
+#include "actionResults.h"
+#include "../settings.h"
 
 //|-------------------|
 //|      Actions      |

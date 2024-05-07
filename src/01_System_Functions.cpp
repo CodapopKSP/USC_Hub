@@ -6,8 +6,8 @@
 #include "02_Transmissions.h"
 #include "03_Actions.h"
 
-#include "src/definitions.h"
-#include "src/actionResults.h"
+#include "definitions.h"
+#include "actionResults.h"
 
 //|-------------------------------|
 //|       System Functions        |

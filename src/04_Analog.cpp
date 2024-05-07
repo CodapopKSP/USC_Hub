@@ -1,7 +1,7 @@
 #include "04_Analog.h"
 
-#include "src/definitions.h"
-#include "settings.h"
+#include "definitions.h"
+#include "../settings.h"
 
 //|-------------------|
 //|      Analog       |

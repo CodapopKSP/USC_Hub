@@ -1,13 +1,13 @@
 #include <Wire.h>
 
+#include "src/01_System_Functions.h"
+#include "src/02_Transmissions.h"
+#include "src/03_Actions.h"
+#include "src/04_Analog.h"
+
 #include "settings.h"
 #include "src/definitions.h"
 #include "src/actionResults.h"
-
-#include "01_System_Functions.h"
-#include "02_Transmissions.h"
-#include "03_Actions.h"
-#include "04_Analog.h"
 
 //|-------------------|
 //|       Main        |
