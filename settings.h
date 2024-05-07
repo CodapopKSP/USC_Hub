@@ -69,11 +69,3 @@
   // If, for instance, you want 10 seconds before, you would use -10.0f;.
   
   float TW_delay = -90.0f;
-
-
-
-
-
-
-
-  

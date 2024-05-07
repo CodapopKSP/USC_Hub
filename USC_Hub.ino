@@ -1,6 +1,6 @@
 #include <Wire.h>
 #include "KerbalSimpit.h"
-#include "utilities.h"
+#include "src/utilities.h"
 #include "definitions.h"
 #include "settings.h"
 #include "actionResults.h"
