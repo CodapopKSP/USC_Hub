@@ -1,3 +1,14 @@
+#pragma once
+
+#include <Wire.h>
+
+#include "01_System_Functions.h"
+#include "02_Transmissions.h"
+#include "03_Actions.h"
+
+#include "src/definitions.h"
+#include "src/actionResults.h"
+
 //|-------------------------------|
 //|       System Functions        |
 //|-------------------------------|

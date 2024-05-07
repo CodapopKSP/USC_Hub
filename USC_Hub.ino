@@ -1,9 +1,13 @@
 #include <Wire.h>
-#include "KerbalSimpit.h"
-#include "src/utilities.h"
-#include "src/definitions.h"
+
 #include "settings.h"
+#include "src/definitions.h"
 #include "src/actionResults.h"
+
+#include "01_System_Functions.h"
+#include "02_Transmissions.h"
+#include "03_Actions.h"
+#include "04_Analog.h"
 
 //|-------------------|
 //|       Main        |

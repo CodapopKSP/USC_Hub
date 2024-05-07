@@ -1,8 +1,8 @@
-#include "Arduino.h"
-#include "KerbalSimpit.h"
-
 #ifndef utilities_h
 #define utilities_h
+
+#include "Arduino.h"
+#include "KerbalSimpit.h"
 
 template <typename T>
 class AnalogPacket
@@ -15,4 +15,5 @@ public:
 
   void Clean(byte messageId, KerbalSimpit simpit);
 };
+
 #endif
