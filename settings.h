@@ -68,6 +68,6 @@
 // Default value is -90.0f;, meaning 90 seconds before the burn.
 // If, for instance, you want 10 seconds before, you would use -10.0f;.
 
-extern float TW_delay;
+const float TW_delay = -90.0f;
 
 #endif
