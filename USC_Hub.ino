@@ -18,12 +18,13 @@ keyboardEmulatorMessage KEY_mod(0x00, 0);
 //|       Main        |
 //|-------------------|
 
-void setup() {
+void setup()
+{
   // Initialize Modules
   Wire.begin();
   // Connect to Simpit
   Serial.begin(115200);
-  
+
   // Reset Modules
   digitalWrite(Reset, LOW);
   delay(100);
@@ -34,17 +35,16 @@ void setup() {
   checkConnections();
   allZero();
 
-  while (!mySimpit.init()) 
+  while (!mySimpit.init())
   {
     delay(100);
   }
 
-
-  
   mySimpit.printToKSP(F("Connected to KSP"), PRINT_TO_SCREEN);
 
   // Setup Analogs
-  if (Rotation_Throttle_Con or Translation_Con or Rotation_Con or Analog_Con or Analog_Throttle_Con) {
+  if (Rotation_Throttle_Con or Translation_Con or Rotation_Con or Analog_Con or Analog_Throttle_Con)
+  {
     analogSetup();
   }
 
@@ -52,28 +52,35 @@ void setup() {
   registerMessageChannels();
 
   // Register Telemetry for LCD
-  if (LCD_Con) {
+  if (LCD_Con)
+  {
     registerTelemetryChannels();
   }
 }
 
-void loop() {
+void loop()
+{
   // Get Updates from Simpit
   mySimpit.update();
-  //mySimpit.printToKSP(String(mySimpit.packetDroppedNbr));
+  // mySimpit.printToKSP(String(mySimpit.packetDroppedNbr));
 
   // Module Transmissions and Actions
-  if (((millis() - lastDebounceTime_w) > update_time) and (isFlying)) {
-    if (Rotation_Throttle_Con or Rotation_Con) {
+  if (((millis() - lastDebounceTime_w) > update_time) and (isFlying))
+  {
+    if (Rotation_Throttle_Con or Rotation_Con)
+    {
       readRotation();
     }
-    if (Translation_Con) {
+    if (Translation_Con)
+    {
       readTranslation();
     }
-    if (Throttle_Con) {
+    if (Throttle_Con)
+    {
       readThrottle();
     }
-    if (Analog_Throttle_Con or Analog_Con) {
+    if (Analog_Throttle_Con or Analog_Con)
+    {
       readAnalog();
     }
     transmissions();
@@ -82,18 +89,24 @@ void loop() {
   }
 
   // Handle EVA buttons
-  if (Translation_Con) {
-    if (On_EVA) {
+  if (Translation_Con)
+  {
+    if (On_EVA)
+    {
       EVA_Button_LAST = true;
     }
-    if (!On_EVA and EVA_Button_LAST) {
-      if (shift_is_down or ctrl_is_down or w_is_down or a_is_down or s_is_down or d_is_down or f_is_down or b_is_down or space_is_down) {
+    if (!On_EVA and EVA_Button_LAST)
+    {
+      if (shift_is_down or ctrl_is_down or w_is_down or a_is_down or s_is_down or d_is_down or f_is_down or b_is_down or space_is_down)
+      {
         EVA_is_down = true;
       }
     }
-    if (EVA_is_down) {
+    if (EVA_is_down)
+    {
       KEY.modifier = KEY_UP_MOD;
-      for (int i = 0; i < 11; i++) {
+      for (int i = 0; i < 11; i++)
+      {
         KEY.keyCode = EVA_List_Analog[i];
         mySimpit.send(KEYBOARD_EMULATOR, KEY);
       }
@@ -101,9 +114,10 @@ void loop() {
       EVA_is_down = false;
     }
   }
-  
+
   // Scene Change
-  if (!isFlying) {
+  if (!isFlying)
+  {
     allZero();
   }
 }
