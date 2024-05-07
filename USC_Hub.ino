@@ -1,18 +1,9 @@
 #include <Wire.h>
 #include "KerbalSimpit.h"
 #include "src/utilities.h"
-#include "definitions.h"
+#include "src/definitions.h"
 #include "settings.h"
-#include "actionResults.h"
-
-KerbalSimpit mySimpit(Serial);
-unsigned long lastDebounceTime_b = 0;
-unsigned long lastDebounceTime_w = 0;
-unsigned long lastDebounceTime_d = 0;
-
-// Turn on Keyboard Emulation
-keyboardEmulatorMessage KEY(0x00);
-keyboardEmulatorMessage KEY_mod(0x00, 0);
+#include "src/actionResults.h"
 
 //|-------------------|
 //|       Main        |

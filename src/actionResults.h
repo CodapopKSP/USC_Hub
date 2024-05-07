@@ -1,3 +1,6 @@
+#ifndef actionResults_h
+#define actionResults_h
+
 #include "KerbalSimpit.h"
 
 //|-------------------|
@@ -95,3 +98,5 @@ const int Navigation_Time_List[8] = {
     0xC0, // `
     0x4D, // M
 };
+
+#endif

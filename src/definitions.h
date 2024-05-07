@@ -1,4 +1,20 @@
-#include "src/utilities.h"
+#ifndef definitions_h
+#define defititions_h
+
+#include "utilities.h"
+
+//|-------------------|
+//|      Global       |
+//|-------------------|
+
+KerbalSimpit mySimpit(Serial);
+unsigned long lastDebounceTime_b = 0;
+unsigned long lastDebounceTime_w = 0;
+unsigned long lastDebounceTime_d = 0;
+
+// Turn on Keyboard Emulation
+keyboardEmulatorMessage KEY(0x00);
+keyboardEmulatorMessage KEY_mod(0x00, 0);
 
 //|-------------------|
 //|   Hub Connector   |
@@ -251,3 +267,5 @@ bool EA_Groups_Ctrl_Con;
 bool Analog_Con;
 bool Analog_Throttle_Con;
 bool EA_Control_Ctrl_Con;
+
+#endif
