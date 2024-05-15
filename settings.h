@@ -54,7 +54,7 @@
 // throttle giving input when it is off, or never reaching 100%), you may
 // raise minVolt_ and/or lower maxVolt_.
 
-#define deadZone_min 466
+#define deadZone_min 400
 #define deadZone_max 557
 #define maxVolt_ 1020
 #define minVolt_ 3

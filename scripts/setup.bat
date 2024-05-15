@@ -1,2 +1,2 @@
-rem %USERPROFILE%\Documents\Arduino\libraries
-mklink /J %USERPROFILE%\Documents\Arduino\libraries\KerbalSimpitRevamped-Arduino libraries\KerbalSimpitRevamped-Arduino
+rem Setup local Simpit Arduino libraries
+libraries\KerbalSimpitRevamped-Arduino\scripts\setup.bat
