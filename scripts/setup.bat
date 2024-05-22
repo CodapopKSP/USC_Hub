@@ -1,2 +1,2 @@
 rem Setup local Simpit Arduino libraries
-libraries\KerbalSimpitRevamped-Arduino\scripts\setup.bat
+..\libraries\KerbalSimpitRevamped-Arduino\scripts\install.bat

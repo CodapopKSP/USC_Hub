@@ -1,118 +1,57 @@
 #include <Wire.h>
 
-#include "src/01_System_Functions.h"
-#include "src/02_Transmissions.h"
-#include "src/03_Actions.h"
-#include "src/04_Analog.h"
-
-#include "settings.h"
-#include "src/definitions.h"
-#include "src/actionResults.h"
+#include <Wire.h>
+#include <SimpitBuilder.h>
+#include <Simpit.h>
+#include "KerbalSimpitAddon.h"
+#include "KerbalSimpitMessageTypes.h"
+#include "src/Modules.h"
 
 //|-------------------|
 //|       Main        |
 //|-------------------|
 
+Simpit *simpit = nullptr;
+
 void setup()
 {
-  // Initialize Modules
   Wire.begin();
-  // Connect to Simpit
   Serial.begin(115200);
 
-  // Reset Modules
-  digitalWrite(Reset, LOW);
-  delay(100);
-  digitalWrite(Reset, HIGH);
-  delay(1000);
+  simpit = SimpitBuilder().RegisterAddon<Modules>().Build(Serial);
+  Modules::Init(*simpit);
 
-  // Check for Connected Modules
-  checkConnections();
-  allZero();
-
-  while (!mySimpit.init())
+  while(simpit->Init((byte)0x37) == false)
   {
-    delay(100);
-  }
-
-  mySimpit.printToKSP(F("Connected to KSP"), PRINT_TO_SCREEN);
-
-  // Setup Analogs
-  if (Rotation_Throttle_Con or Translation_Con or Rotation_Con or Analog_Con or Analog_Throttle_Con)
-  {
-    analogSetup();
-  }
-
-  // Register Channels
-  registerMessageChannels();
-
-  // Register Telemetry for LCD
-  if (LCD_Con)
-  {
-    registerTelemetryChannels();
+    delay(500);
   }
 }
 
 void loop()
 {
-  // Get Updates from Simpit
-  mySimpit.update();
-  // mySimpit.printToKSP(String(mySimpit.packetDroppedNbr));
+  simpit->Update();
 
-  // Module Transmissions and Actions
-  if (((millis() - lastDebounceTime_w) > update_time) and (isFlying))
-  {
-    if (Rotation_Throttle_Con or Rotation_Con)
-    {
-      readRotation();
-    }
-    if (Translation_Con)
-    {
-      readTranslation();
-    }
-    if (Throttle_Con)
-    {
-      readThrottle();
-    }
-    if (Analog_Throttle_Con or Analog_Con)
-    {
-      readAnalog();
-    }
-    transmissions();
-    actions();
-    lastDebounceTime_w = millis();
-  }
+  delay(1000);
 
-  // Handle EVA buttons
-  if (Translation_Con)
-  {
-    if (On_EVA)
-    {
-      EVA_Button_LAST = true;
-    }
-    if (!On_EVA and EVA_Button_LAST)
-    {
-      if (shift_is_down or ctrl_is_down or w_is_down or a_is_down or s_is_down or d_is_down or f_is_down or b_is_down or space_is_down)
-      {
-        EVA_is_down = true;
-      }
-    }
-    if (EVA_is_down)
-    {
-      KEY.modifier = KEY_UP_MOD;
-      for (int i = 0; i < 11; i++)
-      {
-        KEY.keyCode = EVA_List_Analog[i];
-        mySimpit.send(KEYBOARD_EMULATOR, KEY);
-      }
-      KEY.modifier = 0;
-      EVA_is_down = false;
-    }
-  }
+  simpit->Log(String(freeMemory()), CustomLogFlags::Verbose);
+}
 
-  // Scene Change
-  if (!isFlying)
-  {
-    allZero();
-  }
+
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+
+int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
 }
