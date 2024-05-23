@@ -11,7 +11,7 @@ uint16_t bits_display = 0x0;
 uint16_t bits_control = 0x0;
 const byte PROGMEM ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
 
-void Module_Action_AllocMessageTypeCapacity(byte &incoming, byte &outgoing)
+void Module_Action_AllocMessageTypeCapacity(byte &incoming)
 {
     Module_Action_Connected = ModuleHelper::CheckConnection(MODULE_ACTION_CTRL);
     if(Module_Action_Connected == false)
@@ -22,10 +22,6 @@ void Module_Action_AllocMessageTypeCapacity(byte &incoming, byte &outgoing)
     // Ensure space is reserved for 2 incoming messages and 1 outgoing message
     // The specific type implementations are configured below
     incoming += 2;
-    outgoing += 1;
-
-    // TODO: Modules with matching outgoing message types will allocate twice
-    // Solve this.
 }
 
 void Module_Action_RegisterMessageTypes(SimpitBuilder *builder)
@@ -36,9 +32,6 @@ void Module_Action_RegisterMessageTypes(SimpitBuilder *builder)
     }
 
     // Register the messages, utilizing the space reserved above
-
-    builder->RegisterOutgoing<Vessel::Outgoing::CustomActionGroupToggle>();
-
     builder->RegisterIncoming<Environment::Incoming::SceneChange>([](void *sender, Environment::Incoming::SceneChange *data)
     {
         // Request current CAG status

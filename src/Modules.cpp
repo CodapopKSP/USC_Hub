@@ -8,11 +8,10 @@
 Simpit* Modules::BuildSimpit(Stream &serial)
 {
     byte incoming = 0;
-    byte outgoing = 0;
 
     // Configure simpit builder
-    Modules::MessageTypeCapacity(incoming, outgoing);
-    SimpitBuilder builder = SimpitBuilder(incoming, outgoing);
+    Modules::MessageTypeCapacity(incoming);
+    SimpitBuilder builder = SimpitBuilder(incoming);
     Modules::RegisterMessageTypes(&builder);
 
     // Build & init simpit
@@ -28,11 +27,11 @@ Simpit* Modules::BuildSimpit(Stream &serial)
     return simpit;
 }
 
-void Modules::MessageTypeCapacity(byte &incoming, byte &outgoing)
+void Modules::MessageTypeCapacity(byte &incoming)
 {
     ModuleHelper::Reset();
 
-    Module_Action_AllocMessageTypeCapacity(incoming, outgoing);
+    Module_Action_AllocMessageTypeCapacity(incoming);
 }
 
 void Modules::RegisterMessageTypes(SimpitBuilder *builder)
