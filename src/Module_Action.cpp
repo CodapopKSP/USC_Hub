@@ -11,7 +11,7 @@ uint16_t bits_display = 0x0;
 uint16_t bits_control = 0x0;
 const byte PROGMEM ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
 
-void Module_Action_Register(SimpitBuilder *builder)
+void Module_Action_AllocMessageTypeCapacity(byte &incoming, byte &outgoing)
 {
     Module_Action_Connected = ModuleHelper::CheckConnection(MODULE_ACTION_CTRL);
     if(Module_Action_Connected == false)
@@ -19,21 +19,37 @@ void Module_Action_Register(SimpitBuilder *builder)
         return;
     }
 
+    // Ensure space is reserved for 2 incoming messages and 1 outgoing message
+    // The specific type implementations are configured below
+    incoming += 2;
+    outgoing += 1;
+
+    // TODO: Modules with matching outgoing message types will allocate twice
+    // Solve this.
+}
+
+void Module_Action_RegisterMessageTypes(SimpitBuilder *builder)
+{
+    if(Module_Action_Connected == false)
+    {
+        return;
+    }
+
+    // Register the messages, utilizing the space reserved above
+
     builder->RegisterOutgoing<Vessel::Outgoing::CustomActionGroupToggle>();
 
-    // Register incoming SceneChange message handler
     builder->RegisterIncoming<Environment::Incoming::SceneChange>([](void *sender, Environment::Incoming::SceneChange *data)
     {
         // Request current CAG status
         ((Simpit*)sender)->RequestIncoming<Vessel::Incoming::CustomActionGroups>();
     });
 
-    // Register incoming CustomActionGroups message handler
     builder->RegisterIncoming<Vessel::Incoming::CustomActionGroups>([](void* sender, Vessel::Incoming::CustomActionGroups *data) {
         uint16_t bits_incoming = ((uint16_t*)&data->Status)[0]; // Read first 16 CAG bits
         
         for(int i=0; i<10; i++)
-        { // Update bits_display based on mapped incoming_bits values
+        { // Update bits_display based on mapped mapped_bit_index values
             byte mapped_bit_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
             byte value = bitRead(bits_incoming, mapped_bit_index);
             bitWrite(bits_display, i, value);
@@ -44,7 +60,7 @@ void Module_Action_Register(SimpitBuilder *builder)
     });
 }
 
-void Module_Action_Init(Simpit* simpit)
+void Module_Action_InitSimpit(Simpit* simpit)
 {
     simpit->Log("Module_Action_Connected: " + String(Module_Action_Connected), CustomLogFlags::Verbose);
 

@@ -1,15 +1,18 @@
 #ifndef Modules_h
 #define Modules_h
 
-#include <SimpitBuilder.h>
-#include <SimpitAddon.h>
 #include <Simpit.h>
+#include <SimpitBuilder.h>
 
-class Modules : public SimpitAddon
+class Modules
 {
+private:
+    static void MessageTypeCapacity(byte &incoming, byte &outgoing);
+    static void RegisterMessageTypes(SimpitBuilder *builder);
+    static void InitSimpit(Simpit *simpit);
+
 public:
-    void Register(SimpitBuilder *builder);
-    static void Init(Simpit *simpit);
+    static Simpit* BuildSimpit(Stream &serial);
     static void Update(Simpit *simpit);
 };
 

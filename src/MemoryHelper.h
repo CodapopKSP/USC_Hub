@@ -3,6 +3,7 @@
 
 class MemoryHelper
 {
+public:
     static int FreeMemory();
 };
 
