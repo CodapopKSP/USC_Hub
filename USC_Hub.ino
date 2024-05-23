@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include <SimpitBuilder.h>
 #include <Simpit.h>
-#include "KerbalSimpitAddon.h"
+#include "KerbalSimpit.h"
 #include "KerbalSimpitMessageTypes.h"
 #include "settings.h"
 #include "src/Modules.h"
@@ -23,6 +23,7 @@ void setup()
 
   int preSimpitFreeMemory = MemoryHelper::FreeMemory();
   simpit = Modules::BuildSimpit(Serial);
+
   simpit->Log("Mem:" + String(preSimpitFreeMemory) + "->" + String(MemoryHelper::FreeMemory()), CustomLogFlags::Verbose);
 }
 

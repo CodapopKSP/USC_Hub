@@ -121,10 +121,6 @@ byte sendHandshake(int address)
 
 void checkConnections()
 {
-  Action_Ctrl_Con = (sendHandshake(Action_Ctrl_) != 255);
-  Action2_Ctrl_Con = (sendHandshake(Action2_Ctrl_) != 255);
-  Action3_Ctrl_Con = (sendHandshake(Action3_Ctrl_) != 255);
-  Ctrl_Sys_Ctrl_Con = (sendHandshake(Ctrl_Sys_Ctrl_) != 255);
   Navigation_Con = (sendHandshake(Navigation_) != 255);
   Time_Ctrl_Con = (sendHandshake(Time_Ctrl_) != 255);
   Stage_Con = (sendHandshake(Stage_) != 255);
@@ -146,23 +142,6 @@ void checkConnections()
 
 void transmissions()
 {
-  // ctrl_address, dspl_address, in_bytes, out_bytes, ctrl[], dspl[]
-  if (Action_Ctrl_Con)
-  {
-    module_transmission(Action_Ctrl_, Action_Dspl_, 2, 2, Action_Ctrl, Action_Dspl, DummyFlag);
-  }
-  if (Action2_Ctrl_Con)
-  {
-    module_transmission(Action2_Ctrl_, Action2_Dspl_, 2, 2, Action2_Ctrl, Action2_Dspl, DummyFlag);
-  }
-  if (Action3_Ctrl_Con)
-  {
-    module_transmission(Action3_Ctrl_, Action3_Dspl_, 2, 2, Action3_Ctrl, Action3_Dspl, DummyFlag);
-  }
-  if (Ctrl_Sys_Ctrl_Con)
-  {
-    module_transmission(Ctrl_Sys_Ctrl_, Ctrl_Sys_Dspl_, 2, 1, Ctrl_Sys_Ctrl, Ctrl_Sys_Dspl, Ctrl_Sys_Update);
-  }
   if (Navigation_Con)
   {
     module_transmission(Navigation_, 0, 1, 0, Navigation, 0, DummyFlag);

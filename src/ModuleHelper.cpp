@@ -23,7 +23,7 @@ void ModuleHelper::Reset()
     delay(1000);
 }
 
-void ModuleHelper::WriteDisplay(int address, int size, void *data)
+void ModuleHelper::WireWrite(int address, int size, void *data)
 {
     if(address == 0)
     {

@@ -1,12 +1,13 @@
 #include "Module_Action.h"
 
 #include "ModuleHelper.h"
+#include "BitHelper.h"
 
 #define MODULE_ACTION_CTRL 30
 #define MODULE_ACTION_DSPL 31
 
 bool Module_Action_Connected;
-uint16_t bits_control = 0x0;
+uint16_t action_bits_control = 0x0;
 const byte PROGMEM ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
 
 void Module_Action_Simpit_Alloc(byte &incoming)
@@ -17,8 +18,8 @@ void Module_Action_Simpit_Alloc(byte &incoming)
         return;
     }
 
-    // Ensure space is reserved for 2 incoming messages handlers
-    // IMplementations to be reserved below
+    // Ensure space is reserved for required incoming messages handlers
+    // Implementations to be registered below
     incoming += 2;
 }
 
@@ -36,7 +37,7 @@ void Module_Action_Simpit_Register(SimpitBuilder *builder)
 
 void Module_Action_Simpit_Init(Simpit* simpit)
 {
-    simpit->Log("Module_Action_Connected: " + String(Module_Action_Connected), CustomLogFlags::Verbose);
+    simpit->Log("Action: " + String(Module_Action_Connected), CustomLogFlags::Verbose);
 
     if(Module_Action_Connected == false)
     {
@@ -54,28 +55,25 @@ void Module_Action_Simpit_Update(Simpit* simpit)
         return;
     }
 
-    uint16_t bits_wire;
-    ModuleHelper::ReadControl(MODULE_ACTION_CTRL, sizeof(uint16_t), &bits_wire);
+    uint16_t action_bits_wire;
+    ModuleHelper::WireRead(MODULE_ACTION_CTRL, sizeof(uint16_t), &action_bits_wire);
 
-    if(bits_wire == bits_control)
+    if(action_bits_wire == action_bits_control)
     { // No changes, so no action needed
         return;
     }
 
     Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
     byte toggle_index = 0;
-    
+    byte bit_wire;
     for(int i=0; i<10; i++)
     {
-        byte bit_current = bitRead(bits_wire, i);
-        byte bit_old = bitRead(bits_control, i);
-
-        if(bit_old == bit_current)
+        if(BitHelper::CompareBit(action_bits_control, action_bits_wire, i, bit_wire))
         {
             continue;
         }
 
-        if(bit_current == 0)
+        if(bit_wire == 0)
         { // button was released, ignore change for toggle reasons
             continue;
         }
@@ -85,7 +83,9 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     }
 
     simpit->WriteOutgoing(toggle);
-    bits_control = bits_wire;
+
+    // Cache the wire bits to compare to next update
+    action_bits_control = action_bits_wire;
 }
 
 void Module_Action_Incoming_Handler_SceneChange(void* sender, Environment::Incoming::SceneChange *data)
@@ -108,5 +108,5 @@ void Module_Action_Incoming_Handler_CustomActionGroups(void* sender, Vessel::Inc
     }
 
     // Transmit updated, mapped bits_display to module
-    ModuleHelper::WriteDisplay(MODULE_ACTION_DSPL, sizeof(uint16_t), &bits_display);   
+    ModuleHelper::WireWrite(MODULE_ACTION_DSPL, sizeof(uint16_t), &bits_display);
 }

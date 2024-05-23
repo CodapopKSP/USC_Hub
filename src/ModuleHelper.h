@@ -13,9 +13,9 @@ public:
 
     static void Reset();
 
-    static void WriteDisplay(int address, int size, void *data);
+    static void WireWrite(int address, int size, void *data);
 
-    template<typename T> static void ReadControl(int address, int size, T *data)
+    template<typename T> static void WireRead(int address, int size, T *data)
     {
         if(address == 0)
         {
