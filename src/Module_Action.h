@@ -4,7 +4,8 @@
 #include <SimpitBuilder.h>
 #include <Simpit.h>
 
-void Module_Action_Register(SimpitBuilder builder);
-void Module_Action_Init(Simpit simpit);
+void Module_Action_Register(SimpitBuilder *builder);
+void Module_Action_Init(Simpit* simpit);
+void Module_Action_Update(Simpit* simpit);
 
 #endif

@@ -5,14 +5,19 @@
 #include "ModuleHelper.h"
 #include "Module_Action.h"
 
-void Modules::Register(SimpitBuilder builder)
+void Modules::Register(SimpitBuilder *builder)
 {
     ModuleHelper::Reset();
 
     Module_Action_Register(builder);
 }
 
-void Modules::Init(Simpit simpit)
+void Modules::Init(Simpit *simpit)
 {
     Module_Action_Init(simpit);
+}
+
+void Modules::Update(Simpit *simpit)
+{
+    Module_Action_Update(simpit);
 }

@@ -5,6 +5,7 @@
 #include <Simpit.h>
 #include "KerbalSimpitAddon.h"
 #include "KerbalSimpitMessageTypes.h"
+#include "settings.h"
 #include "src/Modules.h"
 
 //|-------------------|
@@ -12,46 +13,38 @@
 //|-------------------|
 
 Simpit *simpit = nullptr;
+unsigned long last_update_time;
 
 void setup()
 {
+  // Wire.setWireTimeout(25000U, true);
+  // Wire.setWireTimeout();
   Wire.begin();
+
   Serial.begin(115200);
 
+  // Build simpit - allow modules to register as needed
   simpit = SimpitBuilder().RegisterAddon<Modules>().Build(Serial);
-  Modules::Init(*simpit);
 
   while(simpit->Init((byte)0x37) == false)
   {
     delay(500);
   }
+
+  // When connected init all modules
+  Modules::Init(simpit);
+  last_update_time = millis();
 }
+
 
 void loop()
 {
-  simpit->Update();
+  unsigned long current_time = millis();
+  if(current_time - last_update_time > MODULE_UPDATE_INTERVAL)
+  {
+    simpit->Update();
 
-  delay(1000);
-
-  simpit->Log(String(freeMemory()), CustomLogFlags::Verbose);
-}
-
-
-
-#ifdef __arm__
-// should use uinstd.h to define sbrk but Due causes a conflict
-extern "C" char* sbrk(int incr);
-#else  // __ARM__
-extern char *__brkval;
-#endif  // __arm__
-
-int freeMemory() {
-  char top;
-#ifdef __arm__
-  return &top - reinterpret_cast<char*>(sbrk(0));
-#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
-  return &top - __brkval;
-#else  // __arm__
-  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
-#endif  // __arm__
+    Modules::Update(simpit);
+    last_update_time = current_time;
+  }
 }

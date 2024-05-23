@@ -22,3 +22,20 @@ void ModuleHelper::Reset()
     digitalWrite(PIN_RESET, HIGH);
     delay(1000);
 }
+
+void ModuleHelper::WriteDisplay(int address, int size, void *data)
+{
+    if(address == 0)
+    {
+        return;
+    }
+
+    byte* bytes = (byte*)data;
+
+    Wire.beginTransmission(address);
+    for (int i = 0; i < size; i++)
+    {
+      Wire.write(bytes[i]);
+    }
+    Wire.endTransmission();
+}

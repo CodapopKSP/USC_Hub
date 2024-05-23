@@ -8,8 +8,9 @@
 class Modules : public SimpitAddon
 {
 public:
-    void Register(SimpitBuilder builder);
-    static void Init(Simpit simpit);
+    void Register(SimpitBuilder *builder);
+    static void Init(Simpit *simpit);
+    static void Update(Simpit *simpit);
 };
 
 #endif
