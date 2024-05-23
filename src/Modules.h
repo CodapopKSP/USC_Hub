@@ -7,9 +7,9 @@
 class Modules
 {
 private:
-    static void MessageTypeCapacity(byte &incoming);
-    static void RegisterMessageTypes(SimpitBuilder *builder);
-    static void InitSimpit(Simpit *simpit);
+    static void SimpitAlloc(byte &incoming);
+    static void SimpitRegister(SimpitBuilder *builder);
+    static void SimpitInit(Simpit *simpit);
 
 public:
     static Simpit* BuildSimpit(Stream &serial);

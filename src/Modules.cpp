@@ -10,9 +10,9 @@ Simpit* Modules::BuildSimpit(Stream &serial)
     byte incoming = 0;
 
     // Configure simpit builder
-    Modules::MessageTypeCapacity(incoming);
+    Modules::SimpitAlloc(incoming);
     SimpitBuilder builder = SimpitBuilder(incoming);
-    Modules::RegisterMessageTypes(&builder);
+    Modules::SimpitRegister(&builder);
 
     // Build & init simpit
     Simpit *simpit = builder.Build(serial);
@@ -22,29 +22,29 @@ Simpit* Modules::BuildSimpit(Stream &serial)
     }
 
     // Init all modules
-    Modules::InitSimpit(simpit);
+    Modules::SimpitInit(simpit);
 
     return simpit;
 }
 
-void Modules::MessageTypeCapacity(byte &incoming)
+void Modules::SimpitAlloc(byte &incoming)
 {
     ModuleHelper::Reset();
 
-    Module_Action_AllocMessageTypeCapacity(incoming);
+    Module_Action_Simpit_Alloc(incoming);
 }
 
-void Modules::RegisterMessageTypes(SimpitBuilder *builder)
+void Modules::SimpitRegister(SimpitBuilder *builder)
 {
-    Module_Action_RegisterMessageTypes(builder);
+    Module_Action_Simpit_Register(builder);
 }
 
-void Modules::InitSimpit(Simpit *simpit)
+void Modules::SimpitInit(Simpit *simpit)
 {
-    Module_Action_InitSimpit(simpit);
+    Module_Action_Simpit_Init(simpit);
 }
 
 void Modules::Update(Simpit *simpit)
 {
-    Module_Action_Update(simpit);
+    Module_Action_Simpit_Update(simpit);
 }
