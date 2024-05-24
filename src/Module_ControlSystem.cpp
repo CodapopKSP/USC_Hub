@@ -70,8 +70,6 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
         return;
     }
 
-    byte bit_wire;
-
     // First 10 bits are dedicated to the SAS Mode buttons
     // Read and broadcast updates as needed
     for(int i=0; i<10; i++)
@@ -91,13 +89,15 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
     }
 
     
+    byte bit_wire; // placeholder
+
     // Check special SAS bit
     if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_SAS_BIT, bit_wire))
     { // Only broadcast if bits do not match
         KerbalSimpitHelper::SetAction(ActionGroupFlags::SAS, bit_wire == 1);
     }
 
-    // Check special SRC bit
+    // Check special RCS bit
     if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_RCS_BIT, bit_wire))
     { // Only broadcast if bits do not match
         KerbalSimpitHelper::SetAction(ActionGroupFlags::RCS, bit_wire == 1);
@@ -109,5 +109,5 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
 
 void Module_ControlSystem_Incoming_Handler_SASInfo(void* sender, Vessel::Incoming::SASInfo *data)
 {
-    ModuleHelper::WireWrite(MODULE_CONTROLSYSTEM_DSPL, sizeof(AutoPilotModeEnum::StabilityAssist), &data->CurrentSASMode);
+    ModuleHelper::WireWrite(MODULE_CONTROLSYSTEM_DSPL, sizeof(AutoPilotModeEnum), &data->CurrentSASMode);
 }

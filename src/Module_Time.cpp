@@ -5,8 +5,8 @@
 #include "BitHelper.h"
 #include "../settings.h"
 
-#define MODULE_TIME_CONTROL 20
-#define MODULE_TIME_DISPLAY 21
+#define MODULE_TIME_CTRL 20
+#define MODULE_TIME_DSPL 21
 
 #define MODULE_TIME_KEY_ALT 0x12
 #define MODULE_TIME_KEY_PERIOD 0xBE
@@ -36,7 +36,7 @@ DECLARE_ENUM_BITWISE_OPERATORS(TimeStateFlags, byte)
 
 void Module_Time_Simpit_Alloc(byte &incoming)
 {
-    Module_Time_Connected = ModuleHelper::CheckConnection(MODULE_TIME_CONTROL);
+    Module_Time_Connected = ModuleHelper::CheckConnection(MODULE_TIME_CTRL);
     if(Module_Time_Connected == false)
     {
         return;
@@ -75,7 +75,7 @@ void Module_Time_Simpit_Update(Simpit* simpit)
     }
 
     TimeStateFlags time_flags_wire;
-    ModuleHelper::WireRead(MODULE_TIME_CONTROL, sizeof(TimeStateFlags), &time_flags_wire);
+    ModuleHelper::WireRead(MODULE_TIME_CTRL, sizeof(TimeStateFlags), &time_flags_wire);
 
     if(time_flags_wire == time_flags_control)
     { // No change...
@@ -161,5 +161,5 @@ void Module_Time_Simpit_Update(Simpit* simpit)
 void Module_Time_Incoming_Handler_FlightInfo(void* sender, Environment::Incoming::FlightStatus *data)
 {
     bool warp_active = data->CurrentTWIndex != 0;
-    ModuleHelper::WireWrite(MODULE_TIME_DISPLAY, sizeof(warp_active), &warp_active);
+    ModuleHelper::WireWrite(MODULE_TIME_DSPL, sizeof(warp_active), &warp_active);
 }

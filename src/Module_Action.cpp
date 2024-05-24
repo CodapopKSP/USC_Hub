@@ -43,7 +43,6 @@ void Module_Action_Simpit_Init(Simpit* simpit)
         return;
     }
 
-    simpit->SubscribeIncoming<Environment::Incoming::SceneChange>();
     simpit->SubscribeIncoming<Vessel::Incoming::CustomActionGroups>();
 }
 
@@ -65,6 +64,9 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
     byte toggle_index = 0;
     byte bit_wire;
+
+    // First 10 bits map to action groups
+    // Read and append changes to the toggle message
     for(int i=0; i<10; i++)
     {
         if(BitHelper::BitTriggered(action_bits_control, action_bits_wire, i) == false)
@@ -72,10 +74,14 @@ void Module_Action_Simpit_Update(Simpit* simpit)
             continue;
         }
 
+        // Ensure bit id is mapped to the corrent action group id
+        // For a clear understanding of the hardware <-> software need for this
+        // Look in misc/action_group_wiring.png
         byte mapped_group_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
         toggle.GroupIds[toggle_index++] = mapped_group_index;
     }
 
+    // Broadcast the flipped bits directly through simpit
     simpit->WriteOutgoing(toggle);
 
     // Cache the wire bits to compare to next update
@@ -84,14 +90,22 @@ void Module_Action_Simpit_Update(Simpit* simpit)
 
 void Module_Action_Incoming_Handler_CustomActionGroups(void* sender, Vessel::Incoming::CustomActionGroups *data)
 {
-    uint16_t bits_simpit = ((uint16_t*)&data->Status)[0]; // Read first 16 CAG bits
+    uint16_t bits_simpit = ((uint16_t*)&data->Status)[0]; // Read first 16 CAG bits (only 10 are used)
     uint16_t bits_display = 0x0;
 
-    for(int i=0; i<10; i++)
-    { // Update bits_display based on mapped mapped_bit_index values
-        byte mapped_bit_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
-        byte value = bitRead(bits_simpit, mapped_bit_index);
+    // Iterate through the first 10 bits, converting them to a valid dspl object
+    // High level - simpit group id bits must be mapped to hardware id bits
+    // This conversion is not 1-1 and is facilitated through the ACTION_GROUP_BITS_MAP mapping.
+    // For a clear understanding of the hardware <-> software need for this
+    // Look in misc/action_group_wiring.png
 
+    for(int i=0; i<10; i++)
+    {
+        // Ensure bit id is mapped to the corrent action group id
+        byte mapped_bit_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
+
+        // Flip bits in display to match incoming simpit data
+        byte value = bitRead(bits_simpit, mapped_bit_index);
         bitWrite(bits_display, i, value);
     }
 
