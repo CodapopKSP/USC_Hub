@@ -67,13 +67,8 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     byte bit_wire;
     for(int i=0; i<10; i++)
     {
-        if(BitHelper::BitChanged(action_bits_control, action_bits_wire, i, bit_wire) == false)
+        if(BitHelper::BitTriggered(action_bits_control, action_bits_wire, i) == false)
         {
-            continue;
-        }
-
-        if(bit_wire == 0)
-        { // button was released, ignore change for toggle reasons
             continue;
         }
 

@@ -76,13 +76,8 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
     // Read and broadcast updates as needed
     for(int i=0; i<10; i++)
     {
-        if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, i, bit_wire) == false)
+        if(BitHelper::BitTriggered(control_system_bits_control, control_system_bits_wire, i) == false)
         {
-            continue;
-        }
-
-        if(bit_wire == 0)
-        { // button was released, ignore change for toggle reasons
             continue;
         }
 

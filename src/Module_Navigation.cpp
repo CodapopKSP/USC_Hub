@@ -75,17 +75,17 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         return;
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::MapReturn))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::MapReturn))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TILDE);
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipMinus))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipMinus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTBRACKET);
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapMinus))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapMinus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_DOWN_MOD);
         delay(50);
@@ -94,17 +94,17 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_UP_MOD);
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipPlus))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipPlus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_RIGHTBRACKET);
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapPlus))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapPlus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TAB);
     }
 
-    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleNav))
+    if(BitHelper::FlagTriggered(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleNav))
     {
         KerbalSimpitHelper::CycleNavballMode();
     }

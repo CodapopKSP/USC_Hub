@@ -140,10 +140,6 @@ void checkConnections()
 
 void transmissions()
 {
-  if (Time_Ctrl_Con)
-  {
-    module_transmission(Time_Ctrl_, Time_Dspl_, 1, 1, Time_Ctrl, Time_Dspl, TW_Update);
-  }
   if (Stage_Con)
   {
     module_transmission(Stage_, 0, 1, 0, stageB, 0, DummyFlag);

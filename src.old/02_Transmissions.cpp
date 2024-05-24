@@ -146,35 +146,6 @@ void messageHandler(byte messageType, byte msg[], byte msgSize)
     }
     break;
 
-  case FLIGHT_STATUS_MESSAGE:
-    if (msgSize == sizeof(flightStatusMessage))
-    {
-      flightStatusMessage myFlight;
-      myFlight = parseFlightStatusMessage(msg);
-      if (Translation_Con or EVA_Ctrl_Con)
-      {
-        On_EVA = (myFlight.flightStatusFlags & FLIGHT_IS_EVA);
-        if (!On_EVA)
-        {
-          EVA_Dspl[0] = 0;
-          EVA_Update = true;
-        }
-      }
-      if (Time_Ctrl_Con or Navigation_Time_Ctrl_Con)
-      {
-        if (myFlight.currentTWIndex > 0)
-        {
-          Time_Dspl[0] = 1;
-        }
-        else
-        {
-          Time_Dspl[0] = 0;
-        }
-        TW_Update = true;
-      }
-    }
-    break;
-
   case SCENE_CHANGE_MESSAGE:
     isFlying = !msg[0];
     mySimpit.deregisterChannel(CAGSTATUS_MESSAGE);

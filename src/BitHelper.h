@@ -1,6 +1,8 @@
 #ifndef BitHelper_h
 #define BitHelper_h
 
+#include "../settings.h"
+
 #define DECLARE_ENUM_BITWISE_OPERATORS(ENUM_TYPE, NUMERIC_TYPE) \
     inline ENUM_TYPE operator|(ENUM_TYPE a, ENUM_TYPE b) { return static_cast<ENUM_TYPE>(static_cast<NUMERIC_TYPE>(a) | static_cast<NUMERIC_TYPE>(b)); } \
     inline ENUM_TYPE operator&(ENUM_TYPE a, ENUM_TYPE b) { return static_cast<ENUM_TYPE>(static_cast<NUMERIC_TYPE>(a) & static_cast<NUMERIC_TYPE>(b)); } \
@@ -37,6 +39,19 @@ public:
         bit_current = bitRead(current, index);
 
         return bit_previous != bit_current;
+    }
+
+    template<typename T> static bool BitTriggered(T previous, T current, byte index)
+    {
+        byte bit_previous = bitRead(previous, index);
+        byte bit_current = bitRead(current, index);
+
+        if(bit_current == bit_previous)
+        {
+            return false;
+        }
+
+        return bit_current != TRIGGER_ON_RELEASE;
     }
 
     /// @brief Compare a specific flag of 2 enums. Return true of the flags match, false otherwise. Sets current_flag_set to true if current has the flag set, false if otherwise
@@ -79,6 +94,12 @@ public:
         return curreng_flag_set == true;
     }
 
+    template<typename T> static bool FlagSet(T value, T flag)
+    {
+        bool flag_set = (value & flag) != 0;
+        return flag_set;
+    }
+
     template<typename T> static bool FlagUnset(T previous, T current, T flag)
     {
         bool curreng_flag_set;
@@ -88,6 +109,17 @@ public:
         }
         
         return curreng_flag_set == false;
+    }
+
+    template<typename T> static bool FlagTriggered(T previous, T current, T flag)
+    {
+        bool curreng_flag_set;
+        if(BitHelper::FlagChanged(previous, current, flag, curreng_flag_set) == false)
+        { // No change...
+            return false;
+        }
+        
+        return curreng_flag_set != TRIGGER_ON_RELEASE;
     }
 };
 
