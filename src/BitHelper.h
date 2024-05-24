@@ -19,6 +19,15 @@ public:
 
         return bit_first == bit_second;
     }
+
+    template<typename T> static bool CompareFlag(T first, T second, T flag, bool &second_flag)
+    {
+        // Cast to uint16_t to ensure all enums will fit?
+        bool first_flag = (static_cast<uint16_t>(first) & static_cast<uint16_t>(flag)) != 0;
+        second_flag = (static_cast<uint16_t>(second) & static_cast<uint16_t>(flag)) != 0;
+
+        return first_flag == second_flag;
+    }
 };
 
 #endif
