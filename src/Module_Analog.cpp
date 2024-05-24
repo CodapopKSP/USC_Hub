@@ -121,7 +121,7 @@ void Module_Analog_Simpit_Update(Simpit* simpit)
         trim_axis3 = 0;
         force_update_axes = true;
 
-        simpit->Log(F("Trim reset"));
+        simpit->Log(F("Trim reset."));
     }
 
     if(
@@ -138,7 +138,7 @@ void Module_Analog_Simpit_Update(Simpit* simpit)
         bool is_rocket = is_plane == false && is_rover == false;
 
         // Wheel control is sent if the gear is active or rover mode is selected
-        bool is_wheels = is_rover || BitHelper::HasFlag(analog_data_wire.StateFlags, AnalogStateFlags::Gear);
+        bool is_wheely = is_rover || BitHelper::HasFlag(analog_data_wire.StateFlags, AnalogStateFlags::Gear);
 
         if(BitHelper::HasFlag(analog_data_wire.StateFlags, AnalogStateFlags::Rotation))
         { // Rotation logic
@@ -159,25 +159,34 @@ void Module_Analog_Simpit_Update(Simpit* simpit)
             // Rocket control
             if(is_rocket)
             {
-                Vessel::Outgoing::Rotation plane_rotation_message = Vessel::Outgoing::Rotation();
-                plane_rotation_message.Mask = 7; // 3 bits, indicating all 3 values broadcasted
-                plane_rotation_message.Yaw = AnalogHelper::SafeAdd(analog_data_wire.Axis1, trim_axis1);
-                plane_rotation_message.Pitch = AnalogHelper::SafeAdd(analog_data_wire.Axis2, trim_axis2);
-                plane_rotation_message.Roll = AnalogHelper::SafeAdd(analog_data_wire.Axis3, trim_axis3);
+                Vessel::Outgoing::Rotation rocket_rotation_message = Vessel::Outgoing::Rotation();
+                rocket_rotation_message.Mask = 7; // 3 bits, indicating all 3 values broadcasted
+                rocket_rotation_message.Yaw = AnalogHelper::SafeAdd(analog_data_wire.Axis1, trim_axis1);
+                rocket_rotation_message.Pitch = AnalogHelper::SafeAdd(analog_data_wire.Axis2, trim_axis2);
+                rocket_rotation_message.Roll = AnalogHelper::SafeAdd(analog_data_wire.Axis3, trim_axis3);
 
                 // Transmit rocket rotation data
-                simpit->WriteOutgoing(plane_rotation_message);
+                simpit->WriteOutgoing(rocket_rotation_message);
             }        
 
             // Wheel control
-            if(is_wheels)
+            if(is_wheely)
             { // This will broadcast wheel controls if gear is active or rover mode is set
-                Vessel::Outgoing::WheelControl plane_wheel_message = Vessel::Outgoing::WheelControl();
-                plane_wheel_message.Steer = -analog_data_wire.Axis1; // Is "inverse" the same as *-1?
-                plane_wheel_message.Throttle = -analog_data_wire.Axis2; // Is "inverse" the same as *-1?
+                Vessel::Outgoing::WheelControl wheel_message = Vessel::Outgoing::WheelControl();
+                wheel_message.Mask = 3;
+                wheel_message.Steer = -analog_data_wire.Axis1; // Is "axis flip" the same as *-1?
+                wheel_message.Throttle = -analog_data_wire.Axis2; // Is "axis flip" the same as *-1?
 
                 // Transmit wheel data
-                simpit->WriteOutgoing(plane_wheel_message);
+                simpit->WriteOutgoing(wheel_message);
+
+                // Pass in some rotation data to give rovers a little kick
+                Vessel::Outgoing::Rotation wheel_rotation_message = Vessel::Outgoing::Rotation();
+                wheel_rotation_message.Mask = 4; // 3 bits, indicating all 3 values broadcasted
+                wheel_rotation_message.Yaw = AnalogHelper::SafeAdd(analog_data_wire.Axis1, trim_axis1);
+
+                // Transmit wheel rotation data
+                simpit->WriteOutgoing(wheel_rotation_message);
             }     
         }
         else
