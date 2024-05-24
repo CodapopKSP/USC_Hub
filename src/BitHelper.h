@@ -94,7 +94,7 @@ public:
         return curreng_flag_set == true;
     }
 
-    template<typename T> static bool FlagSet(T value, T flag)
+    template<typename T> static bool HasFlag(T value, T flag)
     {
         bool flag_set = (value & flag) != 0;
         return flag_set;

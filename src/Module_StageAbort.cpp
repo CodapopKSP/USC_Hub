@@ -3,7 +3,6 @@
 #include <KerbalSimpitHelper.h>
 #include "ModuleHelper.h"
 #include "BitHelper.h"
-#include "../settings.h"
 
 #define MODULE_STAGEABORT_CTRL 12
 
@@ -25,8 +24,6 @@ void Module_StageAbort_Simpit_Alloc(byte &incoming)
     {
         return;
     }
-
-    incoming += 1;
 }
 
 void Module_StageAbort_Simpit_Register(SimpitBuilder *builder)

@@ -1,0 +1,60 @@
+#include "AnalogHelper.h"
+
+#include "../settings.h"
+
+int16_t AnalogHelper::ConvertAxis(int16_t value)
+{
+    // Ensure value is bound between volt min/max
+    if(value > ANALOG_VOLT_MAX)
+    {
+        value = ANALOG_VOLT_MAX;
+    }
+    else if(value < ANALOG_VOLT_MIN)
+    {
+        value = ANALOG_VOLT_MIN;
+    }
+
+    if(value > ANALOG_DEADZONE_MAX)
+    {
+        return map(value, ANALOG_DEADZONE_MAX, ANALOG_VOLT_MAX, 0, INT16_MIN);
+    }
+
+    if(value < ANALOG_DEADZONE_MIN)
+    {
+        return map(value, ANALOG_VOLT_MIN, ANALOG_DEADZONE_MIN, INT16_MAX, 0);
+    }
+
+    return 0;
+}
+
+void AnalogHelper::SwapBytes(int16_t *value)
+{
+    byte* bytes = (byte*)value;
+    byte placeholder = bytes[0];
+
+    bytes[0] = bytes[1];
+    bytes[1] = placeholder;
+}
+
+/// @brief Add 2 shorts together with no overflow
+/// @param a 
+/// @param b 
+/// @return 
+int16_t AnalogHelper::SafeAdd(int16_t a, int16_t b)
+{
+    int32_t a_int = (int)a;
+    int32_t b_int = (int)b;
+
+    int32_t result = a_int + b_int;
+    if(result > INT16_MAX && b > 0)
+    {
+        return INT16_MAX;
+    }
+
+    if(result < INT16_MIN && b < 0)
+    {
+        return INT16_MIN;
+    }
+
+    return result;
+}
