@@ -31,6 +31,8 @@ NavigationFlags navigation_flags_control;
 bool navigation_navball_on;
 bool navigation_map_on;
 
+DECLARE_ENUM_BITWISE_OPERATORS(NavigationFlags, byte)
+
 void Module_Navigation_Simpit_Alloc(byte &incoming)
 {
     Module_Navigation_Connected = ModuleHelper::CheckConnection(MODULE_NAVIGATION_CTRL);
@@ -73,28 +75,17 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         return;
     }
 
-    bool navigation_flag_wire_on;
-
-    if( // Check for MapReturn input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::MapReturn, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::MapReturn))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TILDE);
     }
 
-    if( // Check for CycleShipMinus input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipMinus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipMinus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTBRACKET);
     }
 
-    if( // Check for CycleShipMinus input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapMinus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapMinus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_DOWN_MOD);
         delay(50);
@@ -103,33 +94,22 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_UP_MOD);
     }
 
-    if( // Check for CycleShipPlus input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipPlus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipPlus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_RIGHTBRACKET);
     }
 
-    if( // Check for CycleMapPlus input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapPlus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapPlus))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TAB);
     }
 
-    if( // Check for CycleNav input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleNav, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on == false // button was lifted
-    )
+    if(BitHelper::FlagUnset(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleNav))
     {
         KerbalSimpitHelper::CycleNavballMode();
     }
 
-    if( // Check for Map input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::Map, navigation_flag_wire_on) == false
-    )
+    if(BitHelper::FlagChanged(navigation_flags_control, navigation_flags_wire, NavigationFlags::Map))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_M);
         navigation_map_on = !navigation_map_on;
@@ -140,9 +120,7 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         }
     }
 
-    if( // Check for Nav input
-        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::Nav, navigation_flag_wire_on) == false
-    )
+    if(BitHelper::FlagChanged(navigation_flags_control, navigation_flags_wire, NavigationFlags::Nav))
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_DOT);
         navigation_navball_on = !navigation_navball_on;

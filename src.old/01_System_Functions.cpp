@@ -121,8 +121,6 @@ byte sendHandshake(int address)
 
 void checkConnections()
 {
-
-  Time_Ctrl_Con = (sendHandshake(Time_Ctrl_) != 255);
   Stage_Con = (sendHandshake(Stage_) != 255);
   Abort_Con = (sendHandshake(Abort_) != 255);
   Stage_Abort_Con = (sendHandshake(Stage_Abort_) != 255);

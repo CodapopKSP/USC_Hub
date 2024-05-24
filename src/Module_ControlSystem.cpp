@@ -73,10 +73,10 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
     byte bit_wire;
 
     // First 10 bits are dedicated to the SAS Mode buttons
-    // Read and broadcasts updates as needed
+    // Read and broadcast updates as needed
     for(int i=0; i<10; i++)
     {
-        if(BitHelper::CompareBit(control_system_bits_control, control_system_bits_wire, i, bit_wire))
+        if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, i, bit_wire) == false)
         {
             continue;
         }
@@ -88,18 +88,22 @@ void Module_ControlSystem_Simpit_Update(Simpit* simpit)
 
         AutoPilotModeEnum mode = (AutoPilotModeEnum)pgm_read_byte(SAS_MODES_MAP + i);
         KerbalSimpitHelper::SetSASMode(mode);
+
+        // Is it okay to just ignore the remaining bits once a released button is detected?
+        // Multiple buttons being released at once is highly unlikely, and reducing Serial 
+        // spam seems good - only one SASMode will take effect anyway
+        break; 
     }
 
     
     // Check special SAS bit
-    if(BitHelper::CompareBit(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_SAS_BIT, bit_wire) == false)
+    if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_SAS_BIT, bit_wire))
     { // Only broadcast if bits do not match
         KerbalSimpitHelper::SetAction(ActionGroupFlags::SAS, bit_wire == 1);
     }
-    
 
     // Check special SRC bit
-    if(BitHelper::CompareBit(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_RCS_BIT, bit_wire) == false)
+    if(BitHelper::BitChanged(control_system_bits_control, control_system_bits_wire, MODULE_CONTROLSYSTEM_RCS_BIT, bit_wire))
     { // Only broadcast if bits do not match
         KerbalSimpitHelper::SetAction(ActionGroupFlags::RCS, bit_wire == 1);
     }

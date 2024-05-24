@@ -20,7 +20,7 @@ void Module_Action_Simpit_Alloc(byte &incoming)
 
     // Ensure space is reserved for required incoming messages handlers
     // Implementations to be registered below
-    incoming += 2;
+    incoming += 1;
 }
 
 void Module_Action_Simpit_Register(SimpitBuilder *builder)
@@ -31,7 +31,6 @@ void Module_Action_Simpit_Register(SimpitBuilder *builder)
     }
 
     // Register the messages, utilizing the space reserved above
-    builder->RegisterIncoming<Environment::Incoming::SceneChange>(Module_Action_Incoming_Handler_SceneChange);
     builder->RegisterIncoming<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
 }
 
@@ -68,7 +67,7 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     byte bit_wire;
     for(int i=0; i<10; i++)
     {
-        if(BitHelper::CompareBit(action_bits_control, action_bits_wire, i, bit_wire))
+        if(BitHelper::BitChanged(action_bits_control, action_bits_wire, i, bit_wire) == false)
         {
             continue;
         }
@@ -86,12 +85,6 @@ void Module_Action_Simpit_Update(Simpit* simpit)
 
     // Cache the wire bits to compare to next update
     action_bits_control = action_bits_wire;
-}
-
-void Module_Action_Incoming_Handler_SceneChange(void* sender, Environment::Incoming::SceneChange *data)
-{
-    // Request current CAG status
-    ((Simpit*)sender)->RequestIncoming<Vessel::Incoming::CustomActionGroups>();
 }
 
 void Module_Action_Incoming_Handler_CustomActionGroups(void* sender, Vessel::Incoming::CustomActionGroups *data)
