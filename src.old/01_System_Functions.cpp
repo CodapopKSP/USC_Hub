@@ -121,7 +121,7 @@ byte sendHandshake(int address)
 
 void checkConnections()
 {
-  Navigation_Con = (sendHandshake(Navigation_) != 255);
+
   Time_Ctrl_Con = (sendHandshake(Time_Ctrl_) != 255);
   Stage_Con = (sendHandshake(Stage_) != 255);
   Abort_Con = (sendHandshake(Abort_) != 255);
@@ -142,10 +142,6 @@ void checkConnections()
 
 void transmissions()
 {
-  if (Navigation_Con)
-  {
-    module_transmission(Navigation_, 0, 1, 0, Navigation, 0, DummyFlag);
-  }
   if (Time_Ctrl_Con)
   {
     module_transmission(Time_Ctrl_, Time_Dspl_, 1, 1, Time_Ctrl, Time_Dspl, TW_Update);

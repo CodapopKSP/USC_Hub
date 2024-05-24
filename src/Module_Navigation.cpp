@@ -12,6 +12,7 @@
 #define MODULE_NAVIGATION_KEY_TAB 0x9
 #define MODULE_NAVIGATION_KEY_M 0x4D
 #define MODULE_NAVIGATION_KEY_DOT 0x6E
+#define MODULE_NAVIGATION_KEY_LEFTSHIFT 0xA0
 
 enum struct NavigationFlags : byte
 {
@@ -27,6 +28,8 @@ enum struct NavigationFlags : byte
 
 bool Module_Navigation_Connected;
 NavigationFlags navigation_flags_control;
+bool navigation_navball_on;
+bool navigation_map_on;
 
 void Module_Navigation_Simpit_Alloc(byte &incoming)
 {
@@ -74,34 +77,75 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
 
     if( // Check for MapReturn input
         BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::MapReturn, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on
+        && navigation_flag_wire_on == false // button was lifted
     )
     {
-        KerbalSimpitHelper::EmulateKeypress(MODULE_NAVIGATION_KEY_TILDE);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TILDE);
     }
 
     if( // Check for CycleShipMinus input
         BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipMinus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on
+        && navigation_flag_wire_on == false // button was lifted
     )
     {
-        KerbalSimpitHelper::EmulateKeypress(MODULE_NAVIGATION_KEY_LEFTBRACKET);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTBRACKET);
+    }
+
+    if( // Check for CycleShipMinus input
+        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapMinus, navigation_flag_wire_on) == false
+        && navigation_flag_wire_on == false // button was lifted
+    )
+    {
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_DOWN_MOD);
+        delay(50);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TAB);
+        delay(50);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_LEFTSHIFT, Input::Outgoing::KeyboardEmulator::ModifierFlags::KEY_UP_MOD);
     }
 
     if( // Check for CycleShipPlus input
         BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleShipPlus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on
+        && navigation_flag_wire_on == false // button was lifted
     )
     {
-        KerbalSimpitHelper::EmulateKeypress(MODULE_NAVIGATION_KEY_RIGHTBRACKET);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_RIGHTBRACKET);
     }
 
     if( // Check for CycleMapPlus input
         BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleMapPlus, navigation_flag_wire_on) == false
-        && navigation_flag_wire_on
+        && navigation_flag_wire_on == false // button was lifted
     )
     {
-        KerbalSimpitHelper::EmulateKeypress(MODULE_NAVIGATION_KEY_TAB);
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_TAB);
+    }
+
+    if( // Check for CycleNav input
+        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::CycleNav, navigation_flag_wire_on) == false
+        && navigation_flag_wire_on == false // button was lifted
+    )
+    {
+        KerbalSimpitHelper::CycleNavballMode();
+    }
+
+    if( // Check for Map input
+        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::Map, navigation_flag_wire_on) == false
+    )
+    {
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_M);
+        navigation_map_on = !navigation_map_on;
+
+        if(navigation_map_on != navigation_navball_on)
+        {
+            KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_DOT);
+        }
+    }
+
+    if( // Check for Nav input
+        BitHelper::CompareFlag(navigation_flags_control, navigation_flags_wire, NavigationFlags::Nav, navigation_flag_wire_on) == false
+    )
+    {
+        KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_DOT);
+        navigation_navball_on = !navigation_navball_on;
     }
 
     navigation_flags_control = navigation_flags_wire;
