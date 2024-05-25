@@ -2,7 +2,7 @@
 
 #include "../settings.h"
 
-int16_t AnalogHelper::ConvertAxis(int16_t value)
+int16_t AnalogHelper::MapAxis(int16_t value)
 {
     // Ensure value is bound between volt min/max
     if(value > ANALOG_VOLT_MAX)
@@ -25,6 +25,21 @@ int16_t AnalogHelper::ConvertAxis(int16_t value)
     }
 
     return 0;
+}
+
+int16_t AnalogHelper::MapThrottle(int16_t value)
+{
+    // Ensure value is bound between volt min/max
+    if(value > THROTTLE_VOLT_MAX)
+    {
+        value = THROTTLE_VOLT_MAX;
+    }
+    else if(value < THROTTLE_VOLT_MIN)
+    {
+        value = THROTTLE_VOLT_MIN;
+    }
+
+    return map(value, THROTTLE_VOLT_MIN, THROTTLE_VOLT_MAX, 0, INT16_MAX);
 }
 
 void AnalogHelper::SwapBytes(int16_t *value)

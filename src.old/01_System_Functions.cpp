@@ -137,10 +137,6 @@ void checkConnections()
 
 void transmissions()
 {
-  if (Rotation_Throttle_Con)
-  {
-    module_transmission(Rotation_Throttle_, 0, 9, 0, Rotation, 0, DummyFlag);
-  }
   if (Rotation_Con)
   {
     module_transmission(Rotation_, 0, 7, 0, Rotation, 0, DummyFlag);

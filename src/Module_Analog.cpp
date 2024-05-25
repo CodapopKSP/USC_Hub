@@ -81,9 +81,9 @@ void Module_Analog_Simpit_Update(Simpit* simpit)
     AnalogHelper::SwapBytes(&analog_data_wire.Axis3);
 
     // Convert axes as needed. This does not invert them
-    analog_data_wire.Axis1 = AnalogHelper::ConvertAxis(analog_data_wire.Axis1);
-    analog_data_wire.Axis2 = AnalogHelper::ConvertAxis(analog_data_wire.Axis2);
-    analog_data_wire.Axis3 = AnalogHelper::ConvertAxis(analog_data_wire.Axis3);
+    analog_data_wire.Axis1 = AnalogHelper::MapAxis(analog_data_wire.Axis1);
+    analog_data_wire.Axis2 = AnalogHelper::MapAxis(analog_data_wire.Axis2);
+    analog_data_wire.Axis3 = AnalogHelper::MapAxis(analog_data_wire.Axis3);
 
     if(analog_data_wire == analog_data_control)
     { // No changes, so no action needed

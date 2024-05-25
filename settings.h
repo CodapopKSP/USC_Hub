@@ -45,4 +45,7 @@
 #define ANALOG_VOLT_MIN 0
 #define ANALOG_VOLT_MAX 1023
 
+#define THROTTLE_VOLT_MIN 320
+#define THROTTLE_VOLT_MAX 880
+
 #endif

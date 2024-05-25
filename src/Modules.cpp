@@ -10,6 +10,7 @@
 #include "Module_Time.h"
 #include "Module_StageAbort.h"
 #include "Module_Analog.h"
+#include "Module_Throttle.h"
 
 Simpit* Modules::BuildSimpit(Stream &serial)
 {
@@ -44,6 +45,7 @@ void Modules::SimpitAlloc(byte &incoming)
     Module_Time_Simpit_Alloc(incoming);
     Module_StageAbort_Simpit_Alloc(incoming);
     Module_Analog_Simpit_Alloc(incoming);
+    Module_Throttle_Simpit_Alloc(incoming);
 }
 
 void Modules::SimpitRegister(SimpitBuilder *builder)
@@ -54,6 +56,7 @@ void Modules::SimpitRegister(SimpitBuilder *builder)
     Module_Time_Simpit_Register(builder);
     Module_StageAbort_Simpit_Register(builder);
     Module_Analog_Simpit_Register(builder);
+    Module_Throttle_Simpit_Register(builder);
 }
 
 void Modules::SimpitInit(Simpit *simpit)
@@ -64,6 +67,7 @@ void Modules::SimpitInit(Simpit *simpit)
     Module_Time_Simpit_Init(simpit);
     Module_StageAbort_Simpit_Init(simpit);
     Module_Analog_Simpit_Init(simpit);
+    Module_Throttle_Simpit_Init(simpit);
 }
 
 void Modules::Update(Simpit *simpit)
@@ -74,4 +78,5 @@ void Modules::Update(Simpit *simpit)
     Module_Time_Simpit_Update(simpit);
     Module_StageAbort_Simpit_Update(simpit);
     Module_Analog_Simpit_Update(simpit);
+    Module_Throttle_Simpit_Update(simpit);
 }
