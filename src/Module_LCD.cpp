@@ -18,7 +18,7 @@ enum struct LCDScreen
 };
 
 bool Module_LCD_Connected;
-int lcd_wire_transmit_frame = 0;
+byte lcd_wire_transmit_frame = 0;
 bool lcd_data_dirty = false;
 String lcd_data[10];
 LCDScreen lcd_screen_control;
@@ -120,11 +120,12 @@ void Set_LCD_Ratio(byte index, float available, float max)
     lcd_data_dirty = true;
 }
 
-void Set_LCD_Float(byte index, float value)
+void Set_LCD_Float(byte index, float value, int precision = 0)
 {
+    precision = 3 - precision;
     String value_string = String(value);
     int value_length = value_string.length();
-    value_string.remove(value_length - 3, 3);
+    value_string.remove(value_length - precision, precision);
 
     lcd_data[index] = value_string;
     lcd_data_dirty = true;
@@ -230,8 +231,8 @@ void Module_LCD_Simpit_Register(SimpitBuilder *builder)
     // 13
     builder->RegisterIncoming<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
         Set_LCD_Float(0, data->SemiMajorAxis);
-        Set_LCD_Float(1, data->Eccentricity);
-        Set_LCD_Float(2, data->Inclination);
+        Set_LCD_Float(1, data->Eccentricity, 3);
+        Set_LCD_Float(2, data->Inclination, 3);
         Set_LCD_Float(3, data->Period);
     });
 }
