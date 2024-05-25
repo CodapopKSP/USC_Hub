@@ -45,6 +45,27 @@ void Subscribe_LCD_Screen_Messages(Simpit *simpit, LCDScreen screen)
             simpit->SubscribeIncoming<Resource::Incoming::XenonGas>();
             simpit->SubscribeIncoming<Resource::Incoming::MonoPropellant>();
             break;
+
+        case LCDScreen::Orbit:
+            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->SubscribeIncoming<Vessel::Incoming::OrbitInfo>();
+            break;
+
+        case LCDScreen::Maneuver:
+            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->SubscribeIncoming<Vessel::Incoming::Maneuver>();
+            simpit->SubscribeIncoming<Vessel::Incoming::DeltaV>();
+            break;
+    
+        case LCDScreen::AltitudeVelocity:
+            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->SubscribeIncoming<Vessel::Incoming::Altitude>();
+            simpit->SubscribeIncoming<Vessel::Incoming::Velocity>();
+            simpit->SubscribeIncoming<Vessel::Incoming::DeltaV>();
+            break;
     }
 }
 
@@ -60,7 +81,53 @@ void Unsubscribe_LCD_Screen_Messages(Simpit *simpit, LCDScreen screen)
             simpit->UnsubscribeIncoming<Resource::Incoming::XenonGas>();
             simpit->UnsubscribeIncoming<Resource::Incoming::MonoPropellant>();
             break;
+
+        case LCDScreen::Orbit:
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::OrbitInfo>();
+            break;
+
+        case LCDScreen::Maneuver:
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Maneuver>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::DeltaV>();
+            break;
+    
+        case LCDScreen::AltitudeVelocity:
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Altitude>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::Velocity>();
+            simpit->UnsubscribeIncoming<Vessel::Incoming::DeltaV>();
+            break;
     }
+}
+
+void Set_LCD_Ratio(byte index, float available, float max)
+{
+    String value = available <= 0.01 ? "0" : String(map(available, 0, max, 0, 52));
+    lcd_data[index] = value;
+    lcd_data_dirty = true;
+}
+
+void Set_LCD_Float(byte index, float value)
+{
+    String value_string = String(value);
+    int value_length = value_string.length();
+    value_string.remove(value_length - 3, 3);
+
+    lcd_data[index] = value_string;
+    lcd_data_dirty = true;
+}
+
+void Set_LCD_Int(byte index, int value)
+{
+    String value_string = String(value);
+
+    lcd_data[index] = value_string;
+    lcd_data_dirty = true;
 }
 
 void Module_LCD_Simpit_Alloc(byte &incoming)
@@ -71,7 +138,7 @@ void Module_LCD_Simpit_Alloc(byte &incoming)
         return;
     }
 
-    incoming += 6;
+    incoming += 13;
 }
 
 void Module_LCD_Simpit_Register(SimpitBuilder *builder)
@@ -81,36 +148,83 @@ void Module_LCD_Simpit_Register(SimpitBuilder *builder)
         return;
     }
 
-    // Inline message handlers because im too lazy to make dedicated methods
+    // Lambda message handlers because im too lazy to make dedicated methods
     // If memory becomes an issue that might help things, idk
+
+    // 1
     builder->RegisterIncoming<Resource::Incoming::LiquidFuel>([](void *sender, Resource::Incoming::LiquidFuel *data) {
-        lcd_data[0] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+        Set_LCD_Ratio(0, data->Available, data->Max);
     });
 
+    // 2
     builder->RegisterIncoming<Resource::Incoming::Oxidizer>([](void *sender, Resource::Incoming::Oxidizer *data) {
-        lcd_data[1] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+        Set_LCD_Ratio(1, data->Available, data->Max);
     });
 
+    // 3
     builder->RegisterIncoming<Resource::Incoming::SolidFuel>([](void *sender, Resource::Incoming::SolidFuel *data) {
-        lcd_data[2] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+        Set_LCD_Ratio(2, data->Available, data->Max);
     });
 
-   builder->RegisterIncoming<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
-        lcd_data[3] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+    // 4
+    builder->RegisterIncoming<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
+        Set_LCD_Ratio(3, data->Available, data->Max);
     });
 
-   builder->RegisterIncoming<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
-        lcd_data[4] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+    // 5
+    builder->RegisterIncoming<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
+        Set_LCD_Ratio(4, data->Available, data->Max);
     });
 
-   builder->RegisterIncoming<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
-        lcd_data[5] = data->Available == 0 ? "0" : String(map(data->Available, 0, data->Max, 0, 52));
-        lcd_data_dirty = true;
+    // 6
+    builder->RegisterIncoming<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
+        Set_LCD_Ratio(5, data->Available, data->Max);
+    });
+
+    // 7
+    builder->RegisterIncoming<Vessel::Incoming::Apsides>([](void *sender, Vessel::Incoming::Apsides *data) {
+        Set_LCD_Float(6, data->Apoapsis);
+        Set_LCD_Float(7, data->Periapsis);
+    });
+
+    // 8
+    builder->RegisterIncoming<Vessel::Incoming::ApsidesTime>([](void *sender, Vessel::Incoming::ApsidesTime *data) {
+        Set_LCD_Int(8, data->Apoapsis);
+        Set_LCD_Int(9, data->Periapsis);
+    });
+
+    // 9
+    builder->RegisterIncoming<Vessel::Incoming::DeltaV>([](void *sender, Vessel::Incoming::DeltaV *data) {
+        Set_LCD_Float(5, data->TotalDeltaV);
+    });
+
+    // 10
+    builder->RegisterIncoming<Vessel::Incoming::Altitude>([](void *sender, Vessel::Incoming::Altitude *data) {
+        Set_LCD_Float(0, data->Alt);
+        Set_LCD_Float(1, data->SurfAlt);
+    });
+
+    // 11
+    builder->RegisterIncoming<Vessel::Incoming::Velocity>([](void *sender, Vessel::Incoming::Velocity *data) {
+        Set_LCD_Float(2, data->Orbital);
+        Set_LCD_Float(3, data->Surface);
+        Set_LCD_Float(4, data->Vertical);
+    });
+
+    // 12
+    builder->RegisterIncoming<Vessel::Incoming::Maneuver>([](void *sender, Vessel::Incoming::Maneuver *data) {
+        Set_LCD_Float(0, data->DeltaVNextManeuver);
+        Set_LCD_Float(1, data->TimeToNextManeuver);
+        Set_LCD_Float(2, data->DurationNextManeuver);
+        Set_LCD_Float(3, data->DeltaVTotal);
+    });
+
+    // 13
+    builder->RegisterIncoming<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
+        Set_LCD_Float(0, data->SemiMajorAxis);
+        Set_LCD_Float(1, data->Eccentricity);
+        Set_LCD_Float(2, data->Inclination);
+        Set_LCD_Float(3, data->Period);
     });
 }
 
@@ -138,6 +252,7 @@ void Module_LCD_Simpit_Update(Simpit* simpit)
     if(lcd_screen_wire != lcd_screen_control && lcd_screen_wire != LCDScreen::Idle)
     { // Update screen info
         Unsubscribe_LCD_Screen_Messages(simpit, lcd_screen_control);
+        delay(50);
         Subscribe_LCD_Screen_Messages(simpit, lcd_screen_wire);
 
         Reset_LCD_Data();
