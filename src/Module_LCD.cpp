@@ -288,6 +288,10 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     }
 
     Reset_LCD_Data();
+
+    // Load current screen from wire and subscribe to required message types
+    ModuleHelper::WireRead(MODULE_LCD_CTRL, sizeof(byte), &lcd_screen_control);
+    Subscribe_LCD_Screen_Messages(simpit, lcd_screen_control);
 }
 
 void Module_LCD_Simpit_Update(Simpit* simpit)
