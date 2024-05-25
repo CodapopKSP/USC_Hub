@@ -39,3 +39,15 @@ void ModuleHelper::WireWrite(int address, int size, void *data)
     }
     Wire.endTransmission();
 }
+
+void ModuleHelper::WireWrite(int address, String value)
+{
+    uint16_t packet_size = value.length();
+    if (isnan(packet_size))
+    {
+        packet_size = 3; // set value to zero if it is not a valid number
+    }
+    
+    Wire.write(packet_size);
+    Wire.write(value.c_str(), packet_size);  
+}

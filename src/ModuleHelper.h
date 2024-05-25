@@ -15,6 +15,8 @@ public:
 
     static void WireWrite(int address, int size, void *data);
 
+    static void WireWrite(int address, String value);
+
     template<typename T> static void WireRead(int address, int size, T *data)
     {
         if(address == 0)
