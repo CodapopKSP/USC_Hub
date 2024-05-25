@@ -114,7 +114,7 @@ void Module_Navigation_Simpit_Update(Simpit* simpit)
         KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_M);
         navigation_map_on = !navigation_map_on;
 
-        if(navigation_map_on != navigation_navball_on)
+        if(navigation_map_on == navigation_navball_on)
         {
             KerbalSimpitHelper::KeyboardInput(MODULE_NAVIGATION_KEY_DOT);
         }
