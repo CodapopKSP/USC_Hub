@@ -35,74 +35,82 @@ void Reset_LCD_Data()
 
 void Subscribe_LCD_Screen_Messages(Simpit *simpit, LCDScreen screen)
 {
+    RegisterHandler subscriptions = RegisterHandler();
+
     switch(screen)
     {
         case LCDScreen::Fuel:
-            simpit->SubscribeIncoming<Resource::Incoming::LiquidFuel>();
-            simpit->SubscribeIncoming<Resource::Incoming::Oxidizer>();
-            simpit->SubscribeIncoming<Resource::Incoming::SolidFuel>();
-            simpit->SubscribeIncoming<Resource::Incoming::ElectricCharge>();
-            simpit->SubscribeIncoming<Resource::Incoming::XenonGas>();
-            simpit->SubscribeIncoming<Resource::Incoming::MonoPropellant>();
+            subscriptions.Add<Resource::Incoming::LiquidFuel>(0);
+            subscriptions.Add<Resource::Incoming::Oxidizer>(1);
+            subscriptions.Add<Resource::Incoming::SolidFuel>(2);
+            subscriptions.Add<Resource::Incoming::ElectricCharge>(3);
+            subscriptions.Add<Resource::Incoming::XenonGas>(4);
+            subscriptions.Add<Resource::Incoming::MonoPropellant>(5);
             break;
 
         case LCDScreen::Orbit:
-            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->SubscribeIncoming<Vessel::Incoming::OrbitInfo>();
+            subscriptions.Add<Vessel::Incoming::Apsides>(0);
+            subscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            subscriptions.Add<Vessel::Incoming::OrbitInfo>(2);
             break;
 
         case LCDScreen::Maneuver:
-            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->SubscribeIncoming<Vessel::Incoming::Maneuver>();
-            simpit->SubscribeIncoming<Vessel::Incoming::DeltaV>();
+            subscriptions.Add<Vessel::Incoming::Apsides>(0);
+            subscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            subscriptions.Add<Vessel::Incoming::Maneuver>(2);
+            subscriptions.Add<Vessel::Incoming::DeltaV>(3);
             break;
     
         case LCDScreen::AltitudeVelocity:
-            simpit->SubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->SubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->SubscribeIncoming<Vessel::Incoming::Altitude>();
-            simpit->SubscribeIncoming<Vessel::Incoming::Velocity>();
-            simpit->SubscribeIncoming<Vessel::Incoming::DeltaV>();
+            subscriptions.Add<Vessel::Incoming::Apsides>(0);
+            subscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            subscriptions.Add<Vessel::Incoming::Altitude>(2);
+            subscriptions.Add<Vessel::Incoming::Velocity>(3);
+            subscriptions.Add<Vessel::Incoming::DeltaV>(4);
             break;
     }
+
+    simpit->WriteOutgoing(subscriptions);
 }
 
 void Unsubscribe_LCD_Screen_Messages(Simpit *simpit, LCDScreen screen)
 {
+    DeregisterHandler unsubscriptions = DeregisterHandler();
+
     switch(screen)
     {
         case LCDScreen::Fuel:
-            simpit->UnsubscribeIncoming<Resource::Incoming::LiquidFuel>();
-            simpit->UnsubscribeIncoming<Resource::Incoming::Oxidizer>();
-            simpit->UnsubscribeIncoming<Resource::Incoming::SolidFuel>();
-            simpit->UnsubscribeIncoming<Resource::Incoming::ElectricCharge>();
-            simpit->UnsubscribeIncoming<Resource::Incoming::XenonGas>();
-            simpit->UnsubscribeIncoming<Resource::Incoming::MonoPropellant>();
+            unsubscriptions.Add<Resource::Incoming::LiquidFuel>(0);
+            unsubscriptions.Add<Resource::Incoming::Oxidizer>(1);
+            unsubscriptions.Add<Resource::Incoming::SolidFuel>(2);
+            unsubscriptions.Add<Resource::Incoming::ElectricCharge>(3);
+            unsubscriptions.Add<Resource::Incoming::XenonGas>(4);
+            unsubscriptions.Add<Resource::Incoming::MonoPropellant>(5);
             break;
 
         case LCDScreen::Orbit:
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::OrbitInfo>();
+            unsubscriptions.Add<Vessel::Incoming::Apsides>(0);
+            unsubscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            unsubscriptions.Add<Vessel::Incoming::OrbitInfo>(2);
             break;
 
         case LCDScreen::Maneuver:
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Maneuver>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::DeltaV>();
+            unsubscriptions.Add<Vessel::Incoming::Apsides>(0);
+            unsubscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            unsubscriptions.Add<Vessel::Incoming::Maneuver>(2);
+            unsubscriptions.Add<Vessel::Incoming::DeltaV>(3);
             break;
     
         case LCDScreen::AltitudeVelocity:
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Apsides>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::ApsidesTime>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Altitude>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::Velocity>();
-            simpit->UnsubscribeIncoming<Vessel::Incoming::DeltaV>();
+            unsubscriptions.Add<Vessel::Incoming::Apsides>(0);
+            unsubscriptions.Add<Vessel::Incoming::ApsidesTime>(1);
+            unsubscriptions.Add<Vessel::Incoming::Altitude>(2);
+            unsubscriptions.Add<Vessel::Incoming::Velocity>(3);
+            unsubscriptions.Add<Vessel::Incoming::DeltaV>(4);
             break;
     }
+
+    simpit->WriteOutgoing(unsubscriptions);
 }
 
 void Set_LCD_Ratio(byte index, float available, float max)
@@ -254,11 +262,13 @@ void Module_LCD_Simpit_Update(Simpit* simpit)
         Unsubscribe_LCD_Screen_Messages(simpit, lcd_screen_control);
         delay(50);
         Subscribe_LCD_Screen_Messages(simpit, lcd_screen_wire);
+        delay(50);
 
         Reset_LCD_Data();
 
         lcd_screen_control = lcd_screen_wire;
     }
+    
 
     if(lcd_data_dirty || lcd_wire_transmit_frame > 0)
     { // Transmit to screen if data is dirty
