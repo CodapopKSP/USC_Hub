@@ -22,7 +22,9 @@ Simpit* Modules::BuildSimpit(Stream &serial)
 
     // Build & init simpit
     Simpit *simpit = new Simpit(incomingMessageHandlerCapacity, serial);
-    while(simpit->Init((byte)0x37) == false)
+
+    byte initResponse;
+    while(simpit->Init(initResponse) == false && initResponse != (byte)0x37)
     {
         delay(500);
     }
