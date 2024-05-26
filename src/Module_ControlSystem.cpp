@@ -43,7 +43,7 @@ void Module_ControlSystem_Simpit_Init(Simpit* simpit)
     }
 
     // Register handlers
-    simpit->RegisterIncoming<Vessel::Incoming::SASInfo>(Module_ControlSystem_Incoming_Handler_SASInfo);
+    simpit->RegisterIncomingHandler<Vessel::Incoming::SASInfo>(Module_ControlSystem_Incoming_Handler_SASInfo);
 
     // Subscribe messages
     simpit->SubscribeIncoming<Vessel::Incoming::SASInfo>();

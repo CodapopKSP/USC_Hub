@@ -33,7 +33,7 @@ void Module_Action_Simpit_Init(Simpit* simpit)
     }
 
     // Register handlers
-    simpit->RegisterIncoming<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
+    simpit->RegisterIncomingHandler<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
 
     // Subscribe messages
     simpit->SubscribeIncoming<Vessel::Incoming::CustomActionGroups>();

@@ -55,7 +55,7 @@ void Module_Time_Simpit_Init(Simpit* simpit)
     }
 
     // Register handlers
-    simpit->RegisterIncoming<Environment::Incoming::FlightStatus>(Module_Time_Incoming_Handler_FlightInfo);
+    simpit->RegisterIncomingHandler<Environment::Incoming::FlightStatus>(Module_Time_Incoming_Handler_FlightInfo);
 
     // Subscribe messages
     simpit->SubscribeIncoming<Environment::Incoming::FlightStatus>();

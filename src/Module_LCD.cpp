@@ -163,7 +163,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     // If memory becomes an issue that might help things, idk
 
     // 1
-    simpit->RegisterIncoming<Resource::Incoming::LiquidFuel>([](void *sender, Resource::Incoming::LiquidFuel *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::LiquidFuel>([](void *sender, Resource::Incoming::LiquidFuel *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -171,7 +171,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 2
-    simpit->RegisterIncoming<Resource::Incoming::Oxidizer>([](void *sender, Resource::Incoming::Oxidizer *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::Oxidizer>([](void *sender, Resource::Incoming::Oxidizer *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -179,7 +179,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 3
-    simpit->RegisterIncoming<Resource::Incoming::SolidFuel>([](void *sender, Resource::Incoming::SolidFuel *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::SolidFuel>([](void *sender, Resource::Incoming::SolidFuel *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -187,7 +187,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 4
-    simpit->RegisterIncoming<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -195,7 +195,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 5
-    simpit->RegisterIncoming<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -203,7 +203,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 6
-    simpit->RegisterIncoming<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
+    simpit->RegisterIncomingHandler<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Fuel) return;
 
@@ -211,7 +211,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 7
-    simpit->RegisterIncoming<Vessel::Incoming::Apsides>([](void *sender, Vessel::Incoming::Apsides *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::Apsides>([](void *sender, Vessel::Incoming::Apsides *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
 
@@ -220,7 +220,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 8
-    simpit->RegisterIncoming<Vessel::Incoming::ApsidesTime>([](void *sender, Vessel::Incoming::ApsidesTime *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::ApsidesTime>([](void *sender, Vessel::Incoming::ApsidesTime *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
 
@@ -230,7 +230,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 9
-    simpit->RegisterIncoming<Vessel::Incoming::DeltaV>([](void *sender, Vessel::Incoming::DeltaV *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::DeltaV>([](void *sender, Vessel::Incoming::DeltaV *data) {
 
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver) return;
@@ -239,7 +239,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 10
-    simpit->RegisterIncoming<Vessel::Incoming::Altitude>([](void *sender, Vessel::Incoming::Altitude *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::Altitude>([](void *sender, Vessel::Incoming::Altitude *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
 
@@ -248,7 +248,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 11
-    simpit->RegisterIncoming<Vessel::Incoming::Velocity>([](void *sender, Vessel::Incoming::Velocity *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::Velocity>([](void *sender, Vessel::Incoming::Velocity *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
 
@@ -258,7 +258,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 12
-    simpit->RegisterIncoming<Vessel::Incoming::Maneuver>([](void *sender, Vessel::Incoming::Maneuver *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::Maneuver>([](void *sender, Vessel::Incoming::Maneuver *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Maneuver) return;
 
@@ -269,7 +269,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     });
 
     // 13
-    simpit->RegisterIncoming<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
+    simpit->RegisterIncomingHandler<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
         // Discard data from incorrect subscriptions
         if(lcd_screen_control != LCDScreen::Orbit) return;
 
