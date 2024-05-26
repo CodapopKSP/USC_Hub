@@ -20,7 +20,7 @@ const AutoPilotModeEnum PROGMEM SAS_MODES_MAP[10] = {
     AutoPilotModeEnum::AntiTarget, AutoPilotModeEnum::Target 
 };
 
-void Module_ControlSystem_Simpit_Alloc(byte &incoming)
+void Module_ControlSystem_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_ControlSystem_Connected = ModuleHelper::CheckConnection(MODULE_CONTROLSYSTEM_CTRL);
     if(Module_ControlSystem_Connected == false)
@@ -30,17 +30,7 @@ void Module_ControlSystem_Simpit_Alloc(byte &incoming)
 
     // Ensure space is reserved for required incoming messages handlers
     // Implementations to be registered below
-    incoming += 1;
-}
-
-void Module_ControlSystem_Simpit_Register(SimpitBuilder *builder)
-{
-    if(Module_ControlSystem_Connected == false)
-    {
-        return;
-    }
-
-    builder->RegisterIncoming<Vessel::Incoming::SASInfo>(Module_ControlSystem_Incoming_Handler_SASInfo);
+    incomingMessageHandlerCapacity += 1;
 }
 
 void Module_ControlSystem_Simpit_Init(Simpit* simpit)
@@ -52,6 +42,10 @@ void Module_ControlSystem_Simpit_Init(Simpit* simpit)
         return;
     }
 
+    // Register handlers
+    simpit->RegisterIncoming<Vessel::Incoming::SASInfo>(Module_ControlSystem_Incoming_Handler_SASInfo);
+
+    // Subscribe messages
     simpit->SubscribeIncoming<Vessel::Incoming::SASInfo>();
 }
 

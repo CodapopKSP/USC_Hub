@@ -15,15 +15,13 @@
 
 Simpit* Modules::BuildSimpit(Stream &serial)
 {
-    byte incoming = 0;
+    byte incomingMessageHandlerCapacity = 0;
 
     // Configure simpit builder
-    Modules::SimpitAlloc(incoming);
-    SimpitBuilder builder = SimpitBuilder(incoming);
-    Modules::SimpitRegister(&builder);
+    Modules::SimpitAlloc(incomingMessageHandlerCapacity);
 
     // Build & init simpit
-    Simpit *simpit = builder.Build(serial);
+    Simpit *simpit = new Simpit(incomingMessageHandlerCapacity, serial);
     while(simpit->Init((byte)0x37) == false)
     {
         delay(500);
@@ -48,18 +46,6 @@ void Modules::SimpitAlloc(byte &incoming)
     Module_Analog_Simpit_Alloc(incoming);
     Module_Throttle_Simpit_Alloc(incoming);
     Module_LCD_Simpit_Alloc(incoming);
-}
-
-void Modules::SimpitRegister(SimpitBuilder *builder)
-{
-    Module_Action_Simpit_Register(builder);
-    Module_ControlSystem_Simpit_Register(builder);
-    Module_Navigation_Simpit_Register(builder);
-    Module_Time_Simpit_Register(builder);
-    Module_StageAbort_Simpit_Register(builder);
-    Module_Analog_Simpit_Register(builder);
-    Module_Throttle_Simpit_Register(builder);
-    Module_LCD_Simpit_Register(builder);
 }
 
 void Modules::SimpitInit(Simpit *simpit)

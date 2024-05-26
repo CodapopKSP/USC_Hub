@@ -26,17 +26,9 @@ ThrottleData throttle_data_control;
 DECLARE_ENUM_BITWISE_OPERATORS(ThrottleStateFlags, byte)
 DECLARE_STRUCT_OPERATORS(ThrottleData);
 
-void Module_Throttle_Simpit_Alloc(byte &incoming)
+void Module_Throttle_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_Throttle_Connected = ModuleHelper::CheckConnection(MODULE_ANALOGTHROTTLE_CTRL);
-    if(Module_Throttle_Connected == false)
-    {
-        return;
-    }
-}
-
-void Module_Throttle_Simpit_Register(SimpitBuilder *builder)
-{
     if(Module_Throttle_Connected == false)
     {
         return;

@@ -34,7 +34,7 @@ bool physical_timewarp_mode;
 
 DECLARE_ENUM_BITWISE_OPERATORS(TimeStateFlags, byte)
 
-void Module_Time_Simpit_Alloc(byte &incoming)
+void Module_Time_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_Time_Connected = ModuleHelper::CheckConnection(MODULE_TIME_CTRL);
     if(Module_Time_Connected == false)
@@ -42,17 +42,7 @@ void Module_Time_Simpit_Alloc(byte &incoming)
         return;
     }
 
-    incoming += 1;
-}
-
-void Module_Time_Simpit_Register(SimpitBuilder *builder)
-{
-    if(Module_Time_Connected == false)
-    {
-        return;
-    }
-
-    builder->RegisterIncoming<Environment::Incoming::FlightStatus>(Module_Time_Incoming_Handler_FlightInfo);
+    incomingMessageHandlerCapacity += 1;
 }
 
 void Module_Time_Simpit_Init(Simpit* simpit)
@@ -64,6 +54,10 @@ void Module_Time_Simpit_Init(Simpit* simpit)
         return;
     }
 
+    // Register handlers
+    simpit->RegisterIncoming<Environment::Incoming::FlightStatus>(Module_Time_Incoming_Handler_FlightInfo);
+
+    // Subscribe messages
     simpit->SubscribeIncoming<Environment::Incoming::FlightStatus>();
 }
 

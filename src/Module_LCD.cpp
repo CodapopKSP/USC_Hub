@@ -139,7 +139,7 @@ void Set_LCD_Int(byte index, int value)
     lcd_data_dirty = true;
 }
 
-void Module_LCD_Simpit_Alloc(byte &incoming)
+void Module_LCD_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_LCD_Connected = ModuleHelper::CheckConnection(MODULE_LCD_CTRL);
     if(Module_LCD_Connected == false)
@@ -147,135 +147,7 @@ void Module_LCD_Simpit_Alloc(byte &incoming)
         return;
     }
 
-    incoming += 13;
-}
-
-void Module_LCD_Simpit_Register(SimpitBuilder *builder)
-{
-    if(Module_LCD_Connected == false)
-    {
-        return;
-    }
-
-    // Lambda message handlers because im too lazy to make dedicated methods
-    // If memory becomes an issue that might help things, idk
-
-    // 1
-    builder->RegisterIncoming<Resource::Incoming::LiquidFuel>([](void *sender, Resource::Incoming::LiquidFuel *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(0, data->Available, data->Max);
-    });
-
-    // 2
-    builder->RegisterIncoming<Resource::Incoming::Oxidizer>([](void *sender, Resource::Incoming::Oxidizer *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(1, data->Available, data->Max);
-    });
-
-    // 3
-    builder->RegisterIncoming<Resource::Incoming::SolidFuel>([](void *sender, Resource::Incoming::SolidFuel *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(2, data->Available, data->Max);
-    });
-
-    // 4
-    builder->RegisterIncoming<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(3, data->Available, data->Max);
-    });
-
-    // 5
-    builder->RegisterIncoming<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(4, data->Available, data->Max);
-    });
-
-    // 6
-    builder->RegisterIncoming<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Fuel) return;
-
-        Set_LCD_Ratio(5, data->Available, data->Max);
-    });
-
-    // 7
-    builder->RegisterIncoming<Vessel::Incoming::Apsides>([](void *sender, Vessel::Incoming::Apsides *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
-
-        Set_LCD_Float(6, data->Apoapsis);
-        Set_LCD_Float(7, data->Periapsis);
-    });
-
-    // 8
-    builder->RegisterIncoming<Vessel::Incoming::ApsidesTime>([](void *sender, Vessel::Incoming::ApsidesTime *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
-
-
-        Set_LCD_Int(8, data->Apoapsis);
-        Set_LCD_Int(9, data->Periapsis);
-    });
-
-    // 9
-    builder->RegisterIncoming<Vessel::Incoming::DeltaV>([](void *sender, Vessel::Incoming::DeltaV *data) {
-
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver) return;
-
-        Set_LCD_Float(5, data->TotalDeltaV);
-    });
-
-    // 10
-    builder->RegisterIncoming<Vessel::Incoming::Altitude>([](void *sender, Vessel::Incoming::Altitude *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
-
-        Set_LCD_Float(0, data->Alt);
-        Set_LCD_Float(1, data->SurfAlt);
-    });
-
-    // 11
-    builder->RegisterIncoming<Vessel::Incoming::Velocity>([](void *sender, Vessel::Incoming::Velocity *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
-
-        Set_LCD_Float(2, data->Orbital);
-        Set_LCD_Float(3, data->Surface);
-        Set_LCD_Float(4, data->Vertical);
-    });
-
-    // 12
-    builder->RegisterIncoming<Vessel::Incoming::Maneuver>([](void *sender, Vessel::Incoming::Maneuver *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Maneuver) return;
-
-        Set_LCD_Float(0, data->DeltaVNextManeuver);
-        Set_LCD_Float(1, data->TimeToNextManeuver);
-        Set_LCD_Float(2, data->DurationNextManeuver);
-        Set_LCD_Float(3, data->DeltaVNextManeuver);
-    });
-
-    // 13
-    builder->RegisterIncoming<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
-        // Discard data from incorrect subscriptions
-        if(lcd_screen_control != LCDScreen::Orbit) return;
-
-        Set_LCD_Float(0, data->SemiMajorAxis);
-        Set_LCD_Float(1, data->Eccentricity, 3);
-        Set_LCD_Float(2, data->Inclination, 3);
-        Set_LCD_Float(3, data->Period);
-    });
+    incomingMessageHandlerCapacity += 13;
 }
 
 void Module_LCD_Simpit_Init(Simpit* simpit)
@@ -286,6 +158,126 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     {
         return;
     }
+
+    // Lambda message handlers because im too lazy to make dedicated methods
+    // If memory becomes an issue that might help things, idk
+
+    // 1
+    simpit->RegisterIncoming<Resource::Incoming::LiquidFuel>([](void *sender, Resource::Incoming::LiquidFuel *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(0, data->Available, data->Max);
+    });
+
+    // 2
+    simpit->RegisterIncoming<Resource::Incoming::Oxidizer>([](void *sender, Resource::Incoming::Oxidizer *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(1, data->Available, data->Max);
+    });
+
+    // 3
+    simpit->RegisterIncoming<Resource::Incoming::SolidFuel>([](void *sender, Resource::Incoming::SolidFuel *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(2, data->Available, data->Max);
+    });
+
+    // 4
+    simpit->RegisterIncoming<Resource::Incoming::ElectricCharge>([](void *sender, Resource::Incoming::ElectricCharge *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(3, data->Available, data->Max);
+    });
+
+    // 5
+    simpit->RegisterIncoming<Resource::Incoming::XenonGas>([](void *sender, Resource::Incoming::XenonGas *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(4, data->Available, data->Max);
+    });
+
+    // 6
+    simpit->RegisterIncoming<Resource::Incoming::MonoPropellant>([](void *sender, Resource::Incoming::MonoPropellant *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Fuel) return;
+
+        Set_LCD_Ratio(5, data->Available, data->Max);
+    });
+
+    // 7
+    simpit->RegisterIncoming<Vessel::Incoming::Apsides>([](void *sender, Vessel::Incoming::Apsides *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
+
+        Set_LCD_Float(6, data->Apoapsis);
+        Set_LCD_Float(7, data->Periapsis);
+    });
+
+    // 8
+    simpit->RegisterIncoming<Vessel::Incoming::ApsidesTime>([](void *sender, Vessel::Incoming::ApsidesTime *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver && lcd_screen_control != LCDScreen::Orbit) return;
+
+
+        Set_LCD_Int(8, data->Apoapsis);
+        Set_LCD_Int(9, data->Periapsis);
+    });
+
+    // 9
+    simpit->RegisterIncoming<Vessel::Incoming::DeltaV>([](void *sender, Vessel::Incoming::DeltaV *data) {
+
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::AltitudeVelocity && lcd_screen_control != LCDScreen::Maneuver) return;
+
+        Set_LCD_Float(5, data->TotalDeltaV);
+    });
+
+    // 10
+    simpit->RegisterIncoming<Vessel::Incoming::Altitude>([](void *sender, Vessel::Incoming::Altitude *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
+
+        Set_LCD_Float(0, data->Alt);
+        Set_LCD_Float(1, data->SurfAlt);
+    });
+
+    // 11
+    simpit->RegisterIncoming<Vessel::Incoming::Velocity>([](void *sender, Vessel::Incoming::Velocity *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::AltitudeVelocity) return;
+
+        Set_LCD_Float(2, data->Orbital);
+        Set_LCD_Float(3, data->Surface);
+        Set_LCD_Float(4, data->Vertical);
+    });
+
+    // 12
+    simpit->RegisterIncoming<Vessel::Incoming::Maneuver>([](void *sender, Vessel::Incoming::Maneuver *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Maneuver) return;
+
+        Set_LCD_Float(0, data->DeltaVNextManeuver);
+        Set_LCD_Float(1, data->TimeToNextManeuver);
+        Set_LCD_Float(2, data->DurationNextManeuver);
+        Set_LCD_Float(3, data->DeltaVNextManeuver);
+    });
+
+    // 13
+    simpit->RegisterIncoming<Vessel::Incoming::OrbitInfo>([](void *sender, Vessel::Incoming::OrbitInfo *data) {
+        // Discard data from incorrect subscriptions
+        if(lcd_screen_control != LCDScreen::Orbit) return;
+
+        Set_LCD_Float(0, data->SemiMajorAxis);
+        Set_LCD_Float(1, data->Eccentricity, 3);
+        Set_LCD_Float(2, data->Inclination, 3);
+        Set_LCD_Float(3, data->Period);
+    });
 
     Reset_LCD_Data();
 

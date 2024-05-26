@@ -1,7 +1,6 @@
 #include <Wire.h>
 
 #include <Wire.h>
-#include <SimpitBuilder.h>
 #include <Simpit.h>
 #include "KerbalSimpit.h"
 #include "KerbalSimpitMessageTypes.h"

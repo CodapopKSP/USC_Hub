@@ -37,17 +37,9 @@ AnalogData analog_data_control;
 DECLARE_ENUM_BITWISE_OPERATORS(AnalogStateFlags, byte)
 DECLARE_STRUCT_OPERATORS(AnalogData);
 
-void Module_Analog_Simpit_Alloc(byte &incoming)
+void Module_Analog_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_Analog_Connected = ModuleHelper::CheckConnection(MODULE_ANALOG_CTRL);
-    if(Module_Analog_Connected == false)
-    {
-        return;
-    }
-}
-
-void Module_Analog_Simpit_Register(SimpitBuilder *builder)
-{
     if(Module_Analog_Connected == false)
     {
         return;

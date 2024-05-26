@@ -33,18 +33,10 @@ bool navigation_map_on;
 
 DECLARE_ENUM_BITWISE_OPERATORS(NavigationFlags, byte)
 
-void Module_Navigation_Simpit_Alloc(byte &incoming)
+void Module_Navigation_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_Navigation_Connected = ModuleHelper::CheckConnection(MODULE_NAVIGATION_CTRL);
     if(MODULE_NAVIGATION_CTRL == false)
-    {
-        return;
-    }
-}
-
-void Module_Navigation_Simpit_Register(SimpitBuilder *builder)
-{
-    if(Module_Navigation_Connected == false)
     {
         return;
     }

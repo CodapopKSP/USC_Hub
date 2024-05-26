@@ -17,17 +17,9 @@ StageAbortFlags stageabort_flags_control;
 
 DECLARE_ENUM_BITWISE_OPERATORS(StageAbortFlags, byte)
 
-void Module_StageAbort_Simpit_Alloc(byte &incoming)
+void Module_StageAbort_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_StageAbort_Connected = ModuleHelper::CheckConnection(MODULE_STAGEABORT_CTRL);
-    if(Module_StageAbort_Connected == false)
-    {
-        return;
-    }
-}
-
-void Module_StageAbort_Simpit_Register(SimpitBuilder *builder)
-{
     if(Module_StageAbort_Connected == false)
     {
         return;

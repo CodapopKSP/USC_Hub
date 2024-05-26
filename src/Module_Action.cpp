@@ -10,7 +10,7 @@ bool Module_Action_Connected;
 uint16_t action_bits_control = 0x0;
 const byte PROGMEM ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
 
-void Module_Action_Simpit_Alloc(byte &incoming)
+void Module_Action_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
     Module_Action_Connected = ModuleHelper::CheckConnection(MODULE_ACTION_CTRL);
     if(Module_Action_Connected == false)
@@ -20,18 +20,7 @@ void Module_Action_Simpit_Alloc(byte &incoming)
 
     // Ensure space is reserved for required incoming messages handlers
     // Implementations to be registered below
-    incoming += 1;
-}
-
-void Module_Action_Simpit_Register(SimpitBuilder *builder)
-{
-    if(Module_Action_Connected == false)
-    {
-        return;
-    }
-
-    // Register the messages, utilizing the space reserved above
-    builder->RegisterIncoming<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
+    incomingMessageHandlerCapacity += 1;
 }
 
 void Module_Action_Simpit_Init(Simpit* simpit)
@@ -43,6 +32,10 @@ void Module_Action_Simpit_Init(Simpit* simpit)
         return;
     }
 
+    // Register handlers
+    simpit->RegisterIncoming<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
+
+    // Subscribe messages
     simpit->SubscribeIncoming<Vessel::Incoming::CustomActionGroups>();
 }
 
