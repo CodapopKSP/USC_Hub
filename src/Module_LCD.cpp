@@ -8,7 +8,7 @@
 #define MODULE_LCD_CTRL 40
 #define MODULE_LCD_DSPL 40 // wow!
 
-enum struct LCDScreen
+enum struct LCDScreen : byte
 {
     Fuel = 0,
     AltitudeVelocity = 1,
@@ -282,7 +282,7 @@ void Module_LCD_Simpit_Init(Simpit* simpit)
     Reset_LCD_Data();
 
     // Load current screen from wire and subscribe to required message types
-    ModuleHelper::WireRead(MODULE_LCD_CTRL, sizeof(byte), &lcd_screen_control);
+    ModuleHelper::WireRead(MODULE_LCD_CTRL, sizeof(LCDScreen), &lcd_screen_control);
     Subscribe_LCD_Screen_Messages(simpit, lcd_screen_control);
 }
 
@@ -294,7 +294,7 @@ void Module_LCD_Simpit_Update(Simpit* simpit)
     }
 
     LCDScreen lcd_screen_wire;
-    ModuleHelper::WireRead(MODULE_LCD_CTRL, sizeof(byte), &lcd_screen_wire);
+    ModuleHelper::WireRead(MODULE_LCD_CTRL, sizeof(LCDScreen), &lcd_screen_wire);
     if(lcd_screen_wire != lcd_screen_control && lcd_screen_wire != LCDScreen::Idle)
     { // Update screen info
         Unsubscribe_LCD_Screen_Messages(simpit, lcd_screen_control);
