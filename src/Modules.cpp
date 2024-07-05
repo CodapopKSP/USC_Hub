@@ -12,6 +12,7 @@
 #include "Module_Analog.h"
 #include "Module_Throttle.h"
 #include "Module_LCD.h"
+#include "Module_Rotation_Throttle.h"
 
 Simpit* Modules::BuildSimpit(Stream &serial)
 {
@@ -48,6 +49,7 @@ void Modules::SimpitAlloc(byte &incoming)
     Module_Analog_Simpit_Alloc(incoming);
     Module_Throttle_Simpit_Alloc(incoming);
     Module_LCD_Simpit_Alloc(incoming);
+    Module_Rotation_Throttle_Simpit_Alloc(incoming);
 }
 
 void Modules::SimpitInit(Simpit *simpit)
@@ -60,6 +62,7 @@ void Modules::SimpitInit(Simpit *simpit)
     Module_Analog_Simpit_Init(simpit);
     Module_Throttle_Simpit_Init(simpit);
     Module_LCD_Simpit_Init(simpit);
+    Module_Rotation_Throttle_Simpit_Init(simpit);
 }
 
 void Modules::Update(Simpit *simpit)
@@ -72,4 +75,5 @@ void Modules::Update(Simpit *simpit)
     Module_Analog_Simpit_Update(simpit);
     Module_Throttle_Simpit_Update(simpit);
     Module_LCD_Simpit_Update(simpit);
+    Module_Rotation_Throttle_Simpit_Update(simpit);
 }
