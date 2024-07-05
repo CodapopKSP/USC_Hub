@@ -121,8 +121,8 @@ void Module_Rotation_Throttle_Simpit_Update(Simpit* simpit)
         // Wheel control is sent if the gear is active or rover mode is selected
         bool is_wheely = is_plane;
 
-        // Plane control
-        if(is_plane)
+        // Plane and Rover control
+        if(!is_rocket)
         {
             Vessel::Outgoing::Rotation plane_rotation_message = Vessel::Outgoing::Rotation();
             plane_rotation_message.Mask = 7; // 3 bits, indicating all 3 values broadcasted
@@ -152,17 +152,21 @@ void Module_Rotation_Throttle_Simpit_Update(Simpit* simpit)
         { // This will broadcast wheel controls if gear is active or rover mode is set
             Vessel::Outgoing::WheelControl wheel_message = Vessel::Outgoing::WheelControl();
             wheel_message.Mask = 3;
-            wheel_message.Steer = -rotation_throttle_data_wire.Axis1; // Is "axis flip" the same as *-1?
+            wheel_message.Steer = -rotation_throttle_data_wire.Axis3; // Is "axis flip" the same as *-1?
             wheel_message.Throttle = -rotation_throttle_data_wire.Axis2; // Is "axis flip" the same as *-1?
 
             // Transmit wheel data
             simpit->WriteOutgoing(wheel_message);
         }     
     }
-    
-    Vessel::Outgoing::Throttle throttle_message = Vessel::Outgoing::Throttle();
-    throttle_message.Value = rotation_throttle_data_wire.Throttle;
-    simpit->WriteOutgoing(throttle_message);
 
+    // Throttle
+    if (rotation_throttle_data_wire.Throttle != rotation_throttle_data_control.Throttle)
+    {
+        Vessel::Outgoing::Throttle throttle_message = Vessel::Outgoing::Throttle();
+        throttle_message.Value = rotation_throttle_data_wire.Throttle;
+        simpit->WriteOutgoing(throttle_message);
+    }
+    
     rotation_throttle_data_control = rotation_throttle_data_wire;
 }
