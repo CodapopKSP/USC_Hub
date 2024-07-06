@@ -2,6 +2,8 @@
 
 #include "../settings.h"
 
+int INT16_MIN_PLUS_ONE = -32767;
+
 int16_t AnalogHelper::MapAxis(int16_t value)
 {
     // Ensure value is bound between volt min/max
@@ -16,7 +18,7 @@ int16_t AnalogHelper::MapAxis(int16_t value)
 
     if(value > ANALOG_DEADZONE_MAX)
     {
-        return map(value, ANALOG_DEADZONE_MAX, ANALOG_VOLT_MAX, 0, INT16_MIN);
+        return map(value, ANALOG_DEADZONE_MAX, ANALOG_VOLT_MAX, 0, INT16_MIN_PLUS_ONE);
     }
 
     if(value < ANALOG_DEADZONE_MIN)
@@ -66,9 +68,9 @@ int16_t AnalogHelper::SafeAdd(int16_t a, int16_t b)
         return INT16_MAX;
     }
 
-    if(result < INT16_MIN && b < 0)
+    if(result < INT16_MIN_PLUS_ONE && b < 0)
     {
-        return INT16_MIN;
+        return INT16_MIN_PLUS_ONE;
     }
 
     return result;
