@@ -2,7 +2,36 @@
 
 #include "../settings.h"
 
-int INT16_MIN_PLUS_ONE = -32767;
+int16_t INT16_MIN_PLUS_ONE = -32767;
+bool is_rover_global = false;
+bool is_precision_global = false;
+int16_t precision_divide = 10;
+
+void AnalogHelper::set_is_rover_global(bool set_value)
+{
+    is_rover_global = set_value;
+}
+
+bool AnalogHelper::get_is_rover_global()
+{
+    return is_rover_global;
+}
+
+void AnalogHelper::set_is_precision_global(bool set_value)
+{
+    is_precision_global = set_value;
+}
+
+bool AnalogHelper::get_is_precision_global()
+{
+    return is_precision_global;
+}
+
+int16_t AnalogHelper::get_precision_divide()
+{
+    return precision_divide;
+}
+
 
 int16_t AnalogHelper::MapAxis(int16_t value)
 {
