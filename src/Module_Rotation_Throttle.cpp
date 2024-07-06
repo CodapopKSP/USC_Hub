@@ -75,7 +75,7 @@ void Module_Rotation_Throttle_Simpit_Update(Simpit* simpit)
     rotation_throttle_data_wire.Axis1 = AnalogHelper::MapAxis(rotation_throttle_data_wire.Axis1);
     rotation_throttle_data_wire.Axis2 = AnalogHelper::MapAxis(rotation_throttle_data_wire.Axis2);
     rotation_throttle_data_wire.Axis3 = AnalogHelper::MapAxis(rotation_throttle_data_wire.Axis3);
-    rotation_throttle_data_wire.Throttle = AnalogHelper::MapThrottle(rotation_throttle_data_wire.Throttle);
+    rotation_throttle_data_wire.Throttle = AnalogHelper::MapAnalogThrottle(rotation_throttle_data_wire.Throttle);
 
     if(rotation_throttle_data_wire == rotation_throttle_data_control)
     { // No changes, so no action needed

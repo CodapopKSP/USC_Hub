@@ -29,19 +29,34 @@ int16_t AnalogHelper::MapAxis(int16_t value)
     return 0;
 }
 
-int16_t AnalogHelper::MapThrottle(int16_t value)
+int16_t AnalogHelper::MapThrottle(int16_t value, int16_t min, int16_t max, int16_t cap)
 {
     // Ensure value is bound between volt min/max
-    if(value > THROTTLE_VOLT_MAX)
+    if(value > max)
     {
-        value = THROTTLE_VOLT_MAX;
+        value = max;
     }
-    else if(value < THROTTLE_VOLT_MIN)
+    else if(value < min)
     {
-        value = THROTTLE_VOLT_MIN;
+        value = min;
     }
 
-    return map(value, THROTTLE_VOLT_MIN, THROTTLE_VOLT_MAX, 0, INT16_MAX);
+    return map(value, min, max, 0, cap);
+}
+
+int16_t AnalogHelper::MapAnalogThrottle(int16_t value)
+{
+    // Ensure value is bound between volt min/max
+    if(value > ANALOG_THROTTLE_VOLT_MAX)
+    {
+        value = ANALOG_THROTTLE_VOLT_MAX;
+    }
+    else if(value < ANALOG_THROTTLE_VOLT_MIN)
+    {
+        value = ANALOG_THROTTLE_VOLT_MIN;
+    }
+
+    return map(value, ANALOG_THROTTLE_VOLT_MIN, ANALOG_THROTTLE_VOLT_MAX, 0, INT16_MAX);
 }
 
 void AnalogHelper::SwapBytes(int16_t *value)

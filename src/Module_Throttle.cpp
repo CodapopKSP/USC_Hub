@@ -6,7 +6,7 @@
 #include "StructHelper.h"
 #include "AnalogHelper.h"
 
-#define MODULE_ANALOGTHROTTLE_CTRL 50
+#define MODULE_THROTTLE_CTRL 50
 
 enum struct ThrottleStateFlags : byte
 {
@@ -28,7 +28,7 @@ DECLARE_STRUCT_OPERATORS(ThrottleData);
 
 void Module_Throttle_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
 {
-    Module_Throttle_Connected = ModuleHelper::CheckConnection(MODULE_ANALOGTHROTTLE_CTRL);
+    Module_Throttle_Connected = ModuleHelper::CheckConnection(MODULE_THROTTLE_CTRL);
     if(Module_Throttle_Connected == false)
     {
         return;
@@ -53,31 +53,33 @@ void Module_Throttle_Simpit_Update(Simpit* simpit)
     }
 
     ThrottleData throttle_data_wire;
-    ModuleHelper::WireRead(MODULE_ANALOGTHROTTLE_CTRL, sizeof(ThrottleData), &throttle_data_wire);
+    ModuleHelper::WireRead(MODULE_THROTTLE_CTRL, sizeof(ThrottleData), &throttle_data_wire);
 
     // Bytes come in reversed order from the module, this corrects them
     // Is this an endian issue? Doesnt feel like it...
     AnalogHelper::SwapBytes(&throttle_data_wire.Value);
-
-    // Map value as needed. This does not invert them
-    throttle_data_wire.Value = AnalogHelper::MapThrottle(throttle_data_wire.Value);
 
     if(throttle_data_wire == throttle_data_control)
     {
         return;
     }
 
+    if(BitHelper::HasFlag(throttle_data_wire.StateFlags, ThrottleStateFlags::Precision))
+    { // "pcsn" flag recieved, map value using pmin/pmax on module, capped to a value
+        throttle_data_wire.Value = AnalogHelper::MapThrottle(throttle_data_wire.Value, THROTTLE_PCSN_VOLT_MIN, THROTTLE_PCSN_VOLT_MAX, THROTTLE_PCSN_CAP);
+    }
+    else 
+    {// Mapp throttle using min/max values on module
+        throttle_data_wire.Value = AnalogHelper::MapThrottle(throttle_data_wire.Value, THROTTLE_VOLT_MIN, THROTTLE_VOLT_MAX, INT16_MAX);
+    }
+
+    // Prepare throttle message
     Vessel::Outgoing::Throttle throttle_message = Vessel::Outgoing::Throttle();
     throttle_message.Value = throttle_data_wire.Value;
 
     if(BitHelper::HasFlag(throttle_data_wire.StateFlags, ThrottleStateFlags::Minimum))
-    { // Set throttle to zero if "min-hold" flag recieved
+    { // Set throttle to zero if "min-hold" flag recieved, do this last for priority
         throttle_message.Value = 0;
-    }
-
-    if(BitHelper::HasFlag(throttle_data_wire.StateFlags, ThrottleStateFlags::Precision))
-    { // Divide value if "pcsn" flag recieved
-        throttle_message.Value /= 3;
     }
 
     simpit->WriteOutgoing(throttle_message);
