@@ -128,11 +128,7 @@ void Module_Translation_Simpit_Update(Simpit* simpit)
         bool is_wheely = AnalogHelper::get_is_rover_global();
 
         // Get precision value if set by Translation module
-        int precision_divide = 0;
-        if(AnalogHelper::get_is_precision_global())
-        {
-            precision_divide = AnalogHelper::get_precision_divide();
-        }
+        int precision_divide = AnalogHelper::get_precision_divide();
 
         // Translation logic
         Vessel::Outgoing::Translation translation_message = Vessel::Outgoing::Translation();

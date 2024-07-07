@@ -16,7 +16,6 @@ public:
     static void set_is_rover_global(bool set_value);
     static bool get_is_rover_global();
     static void set_is_precision_global(bool set_value);
-    static bool get_is_precision_global();
     static int16_t get_precision_divide();
 };
 

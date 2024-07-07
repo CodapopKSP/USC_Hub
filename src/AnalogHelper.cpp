@@ -22,16 +22,14 @@ void AnalogHelper::set_is_precision_global(bool set_value)
     is_precision_global = set_value;
 }
 
-bool AnalogHelper::get_is_precision_global()
-{
-    return is_precision_global;
-}
-
 int16_t AnalogHelper::get_precision_divide()
 {
-    return precision_divide;
+    if (is_precision_global==true)
+    {
+        return precision_divide;
+    }
+    return 1;
 }
-
 
 int16_t AnalogHelper::MapAxis(int16_t value)
 {

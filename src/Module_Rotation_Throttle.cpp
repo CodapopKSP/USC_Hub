@@ -123,11 +123,7 @@ void Module_Rotation_Throttle_Simpit_Update(Simpit* simpit)
         bool is_wheely = is_plane;
 
         // Get precision value if set by Translation module
-        int precision_divide = 0;
-        if(AnalogHelper::get_is_precision_global())
-        {
-            precision_divide = AnalogHelper::get_precision_divide();
-        }
+        int precision_divide = AnalogHelper::get_precision_divide();
 
         // Plane and Rover control
         if(!is_rocket)
