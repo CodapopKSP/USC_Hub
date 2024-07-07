@@ -2,6 +2,37 @@
 
 #include "../settings.h"
 
+int16_t INT16_MIN_PLUS_ONE = -32767;
+bool is_rover_global = false;
+bool is_precision_global = false;
+int16_t precision_divide = 10;
+
+void AnalogHelper::set_is_rover_global(bool set_value)
+{
+    is_rover_global = set_value;
+}
+
+bool AnalogHelper::get_is_rover_global()
+{
+    return is_rover_global;
+}
+
+void AnalogHelper::set_is_precision_global(bool set_value)
+{
+    is_precision_global = set_value;
+}
+
+bool AnalogHelper::get_is_precision_global()
+{
+    return is_precision_global;
+}
+
+int16_t AnalogHelper::get_precision_divide()
+{
+    return precision_divide;
+}
+
+
 int16_t AnalogHelper::MapAxis(int16_t value)
 {
     // Ensure value is bound between volt min/max
@@ -16,7 +47,7 @@ int16_t AnalogHelper::MapAxis(int16_t value)
 
     if(value > ANALOG_DEADZONE_MAX)
     {
-        return map(value, ANALOG_DEADZONE_MAX, ANALOG_VOLT_MAX, 0, INT16_MIN);
+        return map(value, ANALOG_DEADZONE_MAX, ANALOG_VOLT_MAX, 0, INT16_MIN_PLUS_ONE);
     }
 
     if(value < ANALOG_DEADZONE_MIN)
@@ -27,19 +58,34 @@ int16_t AnalogHelper::MapAxis(int16_t value)
     return 0;
 }
 
-int16_t AnalogHelper::MapThrottle(int16_t value)
+int16_t AnalogHelper::MapThrottle(int16_t value, int16_t min, int16_t max, int16_t cap)
 {
     // Ensure value is bound between volt min/max
-    if(value > THROTTLE_VOLT_MAX)
+    if(value > max)
     {
-        value = THROTTLE_VOLT_MAX;
+        value = max;
     }
-    else if(value < THROTTLE_VOLT_MIN)
+    else if(value < min)
     {
-        value = THROTTLE_VOLT_MIN;
+        value = min;
     }
 
-    return map(value, THROTTLE_VOLT_MIN, THROTTLE_VOLT_MAX, 0, INT16_MAX);
+    return map(value, min, max, 0, cap);
+}
+
+int16_t AnalogHelper::MapAnalogThrottle(int16_t value)
+{
+    // Ensure value is bound between volt min/max
+    if(value > ANALOG_THROTTLE_VOLT_MAX)
+    {
+        value = ANALOG_THROTTLE_VOLT_MAX;
+    }
+    else if(value < ANALOG_THROTTLE_VOLT_MIN)
+    {
+        value = ANALOG_THROTTLE_VOLT_MIN;
+    }
+
+    return map(value, ANALOG_THROTTLE_VOLT_MIN, ANALOG_THROTTLE_VOLT_MAX, 0, INT16_MAX);
 }
 
 void AnalogHelper::SwapBytes(int16_t *value)
@@ -66,9 +112,9 @@ int16_t AnalogHelper::SafeAdd(int16_t a, int16_t b)
         return INT16_MAX;
     }
 
-    if(result < INT16_MIN && b < 0)
+    if(result < INT16_MIN_PLUS_ONE && b < 0)
     {
-        return INT16_MIN;
+        return INT16_MIN_PLUS_ONE;
     }
 
     return result;

@@ -183,7 +183,6 @@ void Module_Analog_Simpit_Update(Simpit* simpit)
         }
         else
         { // Translation logic
-
             Vessel::Outgoing::Translation translation_message = Vessel::Outgoing::Translation();
             translation_message.Mask = 7; // 3 bits, indicating all 3 values broadcasted
             translation_message.X = analog_data_wire.Axis1;
