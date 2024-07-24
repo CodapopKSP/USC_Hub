@@ -1,4 +1,4 @@
-#include "Module_Action.h"
+#include "Module_ActionModule.h"
 
 #include "ModuleHelper.h"
 #include "BitHelper.h"
@@ -6,50 +6,44 @@
 #define MODULE_ACTION_CTRL 30
 #define MODULE_ACTION_DSPL 31
 
-bool Module_Action_Connected;
-uint16_t action_bits_control = 0x0;
-const byte PROGMEM ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
+const byte PROGMEM ActionModule::ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
 
-void Module_Action_Simpit_Alloc(byte &incomingMessageHandlerCapacity)
+ActionModule::ActionModule() : ModuleBase(F("Action")) {};
+
+bool ActionModule::_connect() const
 {
-    Module_Action_Connected = ModuleHelper::CheckConnection(MODULE_ACTION_CTRL);
-    if(Module_Action_Connected == false)
-    {
-        return;
-    }
-
-    // Ensure space is reserved for required incoming messages handlers
-    // Implementations to be registered below
-    incomingMessageHandlerCapacity += 1;
+    return ModuleHelper::CheckConnection(MODULE_ACTION_CTRL);
 }
 
-void Module_Action_Simpit_Init(Simpit* simpit)
+byte ActionModule::_alloc() const
 {
-    simpit->Log("Action: " + String(Module_Action_Connected), CustomLogFlags::Verbose);
+    return 1;
+}
 
-    if(Module_Action_Connected == false)
-    {
-        return;
-    }
+void ActionModule::_register(Simpit *simpit)
+{
+    simpit->RegisterIncomingSubscriber<Vessel::Incoming::CustomActionGroups>(this);
+}
 
-    // Register handlers
-    simpit->RegisterIncomingHandler<Vessel::Incoming::CustomActionGroups>(Module_Action_Incoming_Handler_CustomActionGroups);
-
-    // Subscribe messages
+void ActionModule::_subscribe(Simpit *simpit) 
+{
     simpit->SubscribeIncoming<Vessel::Incoming::CustomActionGroups>();
+
+    // Reset module cache
+    this->bits = 0x0;
 }
 
-void Module_Action_Simpit_Update(Simpit* simpit)
+void ActionModule::_unsubscribe(Simpit *simpit) 
 {
-    if(Module_Action_Connected == false)
-    {
-        return;
-    }
+    simpit->UnsubscribeIncoming<Vessel::Incoming::CustomActionGroups>();
+}
 
-    uint16_t action_bits_wire;
-    ModuleHelper::WireRead(MODULE_ACTION_CTRL, sizeof(uint16_t), &action_bits_wire);
+void ActionModule::_update(Simpit *simpit)
+{
+    uint16_t latest_bits;
+    ModuleHelper::WireRead(MODULE_ACTION_CTRL, sizeof(uint16_t), &latest_bits);
 
-    if(action_bits_wire == action_bits_control)
+    if(latest_bits == this->bits)
     { // No changes, so no action needed
         return;
     }
@@ -62,7 +56,7 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     // Read and append changes to the toggle message
     for(int i=0; i<10; i++)
     {
-        if(BitHelper::BitTriggered(action_bits_control, action_bits_wire, i) == false)
+        if(BitHelper::BitTriggered(this->bits, latest_bits, i) == false)
         {
             continue;
         }
@@ -70,7 +64,7 @@ void Module_Action_Simpit_Update(Simpit* simpit)
         // Ensure bit id is mapped to the corrent action group id
         // For a clear understanding of the hardware <-> software need for this
         // Look in misc/action_group_wiring.png
-        byte mapped_group_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
+        byte mapped_group_index = pgm_read_byte(this->ACTION_GROUP_BITS_MAP + i);
         toggle.GroupIds[toggle_index++] = mapped_group_index;
     }
 
@@ -78,10 +72,10 @@ void Module_Action_Simpit_Update(Simpit* simpit)
     simpit->WriteOutgoing(toggle);
 
     // Cache the wire bits to compare to next update
-    action_bits_control = action_bits_wire;
+    this->bits = latest_bits;
 }
 
-void Module_Action_Incoming_Handler_CustomActionGroups(void* sender, Vessel::Incoming::CustomActionGroups *data)
+void ActionModule::Process(void *sender, Vessel::Incoming::CustomActionGroups *data)
 {
     uint16_t bits_simpit = ((uint16_t*)&data->Status)[0]; // Read first 16 CAG bits (only 10 are used)
     uint16_t bits_display = 0x0;
@@ -95,7 +89,7 @@ void Module_Action_Incoming_Handler_CustomActionGroups(void* sender, Vessel::Inc
     for(int i=0; i<10; i++)
     {
         // Ensure bit id is mapped to the corrent action group id
-        byte mapped_bit_index = pgm_read_byte(ACTION_GROUP_BITS_MAP + i);
+        byte mapped_bit_index = pgm_read_byte(this->ACTION_GROUP_BITS_MAP + i);
 
         // Flip bits in display to match incoming simpit data
         byte value = bitRead(bits_simpit, mapped_bit_index);

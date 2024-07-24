@@ -1,83 +1,114 @@
 #include "Modules.h"
 
 #include <Wire.h>
-#include <KerbalSimpitMessageTypes.h>
 #include <KerbalSimpitHelper.h>
-#include "ModuleHelper.h"
-#include "Module_Action.h"
-#include "Module_ControlSystem.h"
-#include "Module_Navigation.h"
-#include "Module_Time.h"
-#include "Module_StageAbort.h"
-#include "Module_Analog.h"
-#include "Module_Throttle.h"
-#include "Module_LCD.h"
-#include "Module_Rotation_Throttle.h"
-#include "Module_Translation.h"
+#include "ModuleBase.h"
+#include "Module_NavigationModule.h"
+#include "Module_ActionModule.h"
+#include "Module_RotationTranslationModule.h"
+#include "Module_ControlSystemModule.h"
+#include "Module_LCDModule.h"
+#include "Module_RotationThrottleModule.h"
+#include "Module_StageAbortModule.h"
+#include "Module_TimeModule.h"
+#include "Module_ThrottleModule.h"
+#include "Module_TranslationModule.h"
 
-Simpit* Modules::BuildSimpit(Stream &serial)
+ModuleBase* modules[10] = { 
+    new NavigationModule(),
+    new ActionModule(),
+    new RotationTranslationModule(),
+    new ControlSystemModule(),
+    new LCDModule(),
+    new RotationThrottleModule(),
+    new StageAbortModule(),
+    new TimeModule(),
+    new ThrottleModule(),
+    new TranslationModule()
+};
+
+Simpit* Modules::Initialize(Stream &serial)
 {
-    byte incomingMessageHandlerCapacity = 0;
+    // ---------------------------
+    // BEGIN MODULE INITIALIZATION
+    // ---------------------------
 
-    // Configure simpit builder
-    Modules::SimpitAlloc(incomingMessageHandlerCapacity);
+    // 1: Initialize all modules
+    byte incomingMessageHandlerCapacity = 1;
+    for(ModuleBase* module : modules)
+    {
+        module->Initialize(incomingMessageHandlerCapacity);
+    }
 
-    // Build & init simpit
+    // 2: Create simpit instance
     Simpit *simpit = new Simpit(incomingMessageHandlerCapacity, serial);
 
+    // 3: Attempt connection with KSP
     byte initResponse;
     while(simpit->Init(initResponse) == false && initResponse != (byte)0x37)
     {
         delay(500);
     }
 
-    // Init all modules
+    // 4: Init KerbalSimpit
     KerbalSimpitHelper::Init(simpit);
-    Modules::SimpitInit(simpit);
+
+    // 5: Register module subscription handler for incoming SceneChange messages
+    // Note: This is responsible for subscribing and unsubscribing modules
+    // when the scene enters or leaves the flight scene.
+    // As is, there is no need for modules to function outside of flight, correct?
+    simpit->RegisterIncomingSubscriber<Environment::Incoming::SceneChange>(Modules::HandleSceneChanged);
+
+    // 6: Register all module handlers
+    for(ModuleBase* module : modules)
+    {
+        module->Register(simpit);
+    }
+
+    // 7: Subscribe to SceneChange data
+    simpit->SubscribeIncoming<Environment::Incoming::SceneChange>();
+
+    // 8: Log all hub modules to KSP
+    for(ModuleBase* module : modules)
+    {
+        if(module->IsConnected() == true)
+        {
+            simpit->Log(module->Name, CustomLogFlags::Verbose);
+        }
+    }
 
     return simpit;
 }
 
-void Modules::SimpitAlloc(byte &incoming)
-{
-    ModuleHelper::Reset();
-
-    Module_Action_Simpit_Alloc(incoming);
-    Module_ControlSystem_Simpit_Alloc(incoming);
-    Module_Navigation_Simpit_Alloc(incoming);
-    Module_Time_Simpit_Alloc(incoming);
-    Module_StageAbort_Simpit_Alloc(incoming);
-    Module_Analog_Simpit_Alloc(incoming);
-    Module_Throttle_Simpit_Alloc(incoming);
-    Module_LCD_Simpit_Alloc(incoming);
-    Module_Rotation_Throttle_Simpit_Alloc(incoming);
-    Module_Translation_Simpit_Alloc(incoming);
-}
-
-void Modules::SimpitInit(Simpit *simpit)
-{
-    Module_Action_Simpit_Init(simpit);
-    Module_ControlSystem_Simpit_Init(simpit);
-    Module_Navigation_Simpit_Init(simpit);
-    Module_Time_Simpit_Init(simpit);
-    Module_StageAbort_Simpit_Init(simpit);
-    Module_Analog_Simpit_Init(simpit);
-    Module_Throttle_Simpit_Init(simpit);
-    Module_LCD_Simpit_Init(simpit);
-    Module_Rotation_Throttle_Simpit_Init(simpit);
-    Module_Translation_Simpit_Init(simpit);
-}
-
 void Modules::Update(Simpit *simpit)
 {
-    Module_Action_Simpit_Update(simpit);
-    Module_ControlSystem_Simpit_Update(simpit);
-    Module_Navigation_Simpit_Update(simpit);
-    Module_Time_Simpit_Update(simpit);
-    Module_StageAbort_Simpit_Update(simpit);
-    Module_Analog_Simpit_Update(simpit);
-    Module_Throttle_Simpit_Update(simpit);
-    Module_LCD_Simpit_Update(simpit);
-    Module_Rotation_Throttle_Simpit_Update(simpit);
-    Module_Translation_Simpit_Update(simpit);
+    for(ModuleBase* module : modules)
+    {
+        module->Update(simpit);
+    }
+}
+
+void Modules::HandleSceneChanged(void *sender, Environment::Incoming::SceneChange *data)
+{
+    Simpit *simpit = (Simpit*)sender;
+
+    if(data->Type == Environment::Incoming::SceneChange::SceneChangeTypeEnum::Flight)
+    {
+        for(ModuleBase* module : modules)
+        {
+            module->Subscribe(simpit);
+        }
+
+        return;
+    }
+
+    if(data->Type == Environment::Incoming::SceneChange::SceneChangeTypeEnum::NotFlight)
+    {
+        for(ModuleBase* module : modules)
+        {
+            module->Unsubscribe(simpit);
+        }
+
+        return;
+    }
 }

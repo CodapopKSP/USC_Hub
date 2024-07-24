@@ -2,15 +2,15 @@
 #define Modules_h
 
 #include <Simpit.h>
+#include <KerbalSimpitMessageTypes.h>
 
 class Modules
 {
 private:
-    static void SimpitAlloc(byte &incoming);
-    static void SimpitInit(Simpit *simpit);
+    static void HandleSceneChanged(void *sender, Environment::Incoming::SceneChange *data);
 
 public:
-    static Simpit* BuildSimpit(Stream &serial);
+    static Simpit* Initialize(Stream &serial);
     static void Update(Simpit *simpit);
 };
 

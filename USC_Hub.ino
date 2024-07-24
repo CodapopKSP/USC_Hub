@@ -21,7 +21,7 @@ void setup()
   Serial.begin(115200);
 
   int preSimpitFreeMemory = MemoryHelper::FreeMemory();
-  simpit = Modules::BuildSimpit(Serial);
+  simpit = Modules::Initialize(Serial);
 
   simpit->Log("Mem:" + String(preSimpitFreeMemory) + "->" + String(MemoryHelper::FreeMemory()), CustomLogFlags::Verbose);
 }
