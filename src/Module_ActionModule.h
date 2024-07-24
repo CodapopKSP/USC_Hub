@@ -1,5 +1,5 @@
-#ifndef Module_Action_h
-#define Module_Action_h
+#ifndef Module_ActionModule_h
+#define Module_ActionModule_h
 
 #include <Simpit.h>
 #include <KerbalSimpitMessageTypes.h>

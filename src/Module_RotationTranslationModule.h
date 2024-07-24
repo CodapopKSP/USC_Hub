@@ -1,5 +1,5 @@
-#ifndef Module_RotationTranslation_h
-#define Module_RotationTranslation_h
+#ifndef Module_RotationTranslationModule_h
+#define Module_RotationTranslationModule_h
 
 #include <Simpit.h>
 #include <KerbalSimpitMessageTypes.h>

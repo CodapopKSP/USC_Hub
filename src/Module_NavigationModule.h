@@ -1,5 +1,5 @@
-#ifndef Module_Navigation_h
-#define Module_Navigation_h
+#ifndef Module_NavigationModule_h
+#define Module_NavigationModule_h
 
 #include <Simpit.h>
 #include "ModuleBase.h"
