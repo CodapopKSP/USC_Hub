@@ -325,7 +325,7 @@ void TelemetryModule::Process(void *sender, Vessel::Incoming::Maneuver *data)
     this->SetFloat(0, data->DeltaVNextManeuver);
     this->SetFloat(1, data->TimeToNextManeuver);
     this->SetFloat(2, data->DurationNextManeuver);
-    this->SetFloat(3, data->DeltaVNextManeuver);
+    this->SetFloat(3, data->DeltaVTotal);
 };
 
 void TelemetryModule::Process(void *sender, Vessel::Incoming::OrbitInfo *data)
