@@ -7,7 +7,7 @@
 #include "Module_ActionModule.h"
 #include "Module_RotationTranslationModule.h"
 #include "Module_ControlSystemModule.h"
-#include "Module_LCDModule.h"
+#include "Module_TelemetryModule.h"
 #include "Module_RotationThrottleModule.h"
 #include "Module_StageAbortModule.h"
 #include "Module_TimeModule.h"
@@ -19,7 +19,7 @@ ModuleBase* modules[10] = {
     new ActionModule(),
     new RotationTranslationModule(),
     new ControlSystemModule(),
-    new LCDModule(),
+    new TelemetryModule(),
     new RotationThrottleModule(),
     new StageAbortModule(),
     new TimeModule(),

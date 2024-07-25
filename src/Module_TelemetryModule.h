@@ -1,12 +1,12 @@
-#ifndef Module_LCDModule_h
-#define Module_LCDModule_h
+#ifndef Module_TelemetryModule_h
+#define Module_TelemetryModule_h
 
 #include <Simpit.h>
 #include <KerbalSimpitMessageTypes.h>
 #include "ModuleBase.h"
 #include "IncomingMessageSubscriber.h"
 
-enum struct LCDModuleScreenEnum : byte
+enum struct TelemetryModuleScreenEnum : byte
 {
     Fuel = 0,
     AltitudeVelocity = 1,
@@ -15,7 +15,7 @@ enum struct LCDModuleScreenEnum : byte
     Idle = 4
 };
 
-class LCDModule : public ModuleBase, 
+class TelemetryModule : public ModuleBase, 
     public IncomingMessageSubscriber<Resource::Incoming::LiquidFuel>,
     public IncomingMessageSubscriber<Resource::Incoming::Oxidizer>,
     public IncomingMessageSubscriber<Resource::Incoming::SolidFuel>,
@@ -34,10 +34,10 @@ class LCDModule : public ModuleBase,
         byte frame = 0;
         bool dirty = false;
         String data[10];
-        LCDModuleScreenEnum screen;
+        TelemetryModuleScreenEnum screen;
 
-        void SubscribeScreen(Simpit *simpit, LCDModuleScreenEnum screen);
-        void UnsubscribeScreen(Simpit *simpit, LCDModuleScreenEnum screen);
+        void SubscribeScreen(Simpit *simpit, TelemetryModuleScreenEnum screen);
+        void UnsubscribeScreen(Simpit *simpit, TelemetryModuleScreenEnum screen);
         void Reset();
 
         void SetRatio(byte index, float available, float max);
@@ -53,7 +53,7 @@ class LCDModule : public ModuleBase,
         virtual void _update(Simpit *simpit) override;
 
     public:
-        LCDModule();
+        TelemetryModule();
 
         virtual void Process(void *sender, Resource::Incoming::LiquidFuel *data) override;
         virtual void Process(void *sender, Resource::Incoming::Oxidizer *data) override;
