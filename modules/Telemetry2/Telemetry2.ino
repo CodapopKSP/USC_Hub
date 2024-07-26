@@ -29,6 +29,7 @@ enum struct TelemetryModuleScreenEnum : byte
     NoSignal = 4,
     Boot = 5,
     Splash = 6,
+    Idle = 7
 };
 
 struct __attribute__((packed)) TelemetryModuleFuelData
@@ -159,15 +160,30 @@ void onI2CReceive(int byteCount)
 {
   TelemetryModuleScreenEnum incoming_screen;
   Wire.readBytes((byte*)&incoming_screen, 1);
-  Wire.readBytes((byte*)&data, sizeof(TelemetryModuleData));
 
-  if(incoming_screen != screen)
+  if(screen != incoming_screen)
   {
-    set_screen(incoming_screen);
+    if(incoming_screen == TelemetryModuleScreenEnum::NoSignal)
+    {
+      signal = false;
+    }
+    else if(incoming_screen >= TelemetryModuleScreenEnum::NoSignal)
+    {
+      if(screen >= TelemetryModuleScreenEnum::NoSignal)
+      {
+        set_screen(TelemetryModuleScreenEnum::Telemetry);
+      }
+
+      signal = true;
+    }
+    else
+    {
+      set_screen(incoming_screen);
+    }
   }
 
+  Wire.readBytes((byte*)&data, sizeof(TelemetryModuleData));
   dirty = true;
-  signal = incoming_screen != TelemetryModuleScreenEnum::NoSignal;
 }
 
 void set_screen(TelemetryModuleScreenEnum value)
@@ -190,40 +206,49 @@ void draw_screen()
 
   do 
   {
-
-    switch(screen)
+    if(signal == false)
     {
-      case TelemetryModuleScreenEnum::Fuel:
-        draw_fuel_screen(data.Fuel);
-        break;
+      switch(screen)
+      {
 
-      case TelemetryModuleScreenEnum::Telemetry:
-        draw_telemetry_screen(data.Telemetry);
-        break;
+        case TelemetryModuleScreenEnum::Boot:
+          draw_boot_screen();
+          break;
 
-      case TelemetryModuleScreenEnum::Maneuver:
-        draw_maneuver_screen(data.Maneuver);
-        break;
+        case TelemetryModuleScreenEnum::Splash:
+          draw_spash_screen();
+          break;
 
-      case TelemetryModuleScreenEnum::Orbit:
-        draw_orbit_screen(data.Orbit);
-        break;
+        default:
+          draw_no_signal_screen();
+          break;
+      }  
+    }
 
-      case TelemetryModuleScreenEnum::Boot:
-        draw_boot_screen();
-        break;
+    if(signal == true)
+    {
+      switch(screen)
+      {
+        case TelemetryModuleScreenEnum::Fuel:
+          draw_fuel_screen(data.Fuel);
+          break;
 
-      case TelemetryModuleScreenEnum::Splash:
-        draw_spash_screen();
-        break;
-      
-      case TelemetryModuleScreenEnum::NoSignal:
-        draw_no_signal_screen();
-        break;
+        case TelemetryModuleScreenEnum::Telemetry:
+          draw_telemetry_screen(data.Telemetry);
+          break;
 
-      default:
-        draw_idle_screen();
-        break;
+        case TelemetryModuleScreenEnum::Maneuver:
+          draw_maneuver_screen(data.Maneuver);
+          break;
+
+        case TelemetryModuleScreenEnum::Orbit:
+          draw_orbit_screen(data.Orbit);
+          break;
+
+        default:
+          draw_idle_screen();
+          break;
+      }    
     }
 
   } while ( u8g2.nextPage() );
@@ -277,7 +302,7 @@ void draw_spash_screen()
 
   if(step >= 18)
   {
-    set_screen(TelemetryModuleScreenEnum::NoSignal);
+    set_screen(TelemetryModuleScreenEnum::Idle);
   }
 }
 

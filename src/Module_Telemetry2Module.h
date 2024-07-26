@@ -16,6 +16,7 @@ enum struct TelemetryModuleScreenEnum : byte
     NoSignal = 4,
     Boot = 5,
     Splash = 6,
+    Idle = 7
 };
 
 struct __attribute__((packed)) TelemetryModuleFuelData

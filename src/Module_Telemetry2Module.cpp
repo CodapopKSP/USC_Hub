@@ -37,13 +37,17 @@ void Telemetry2Module::_register(Simpit *simpit)
 
 void Telemetry2Module::_subscribe(Simpit *simpit) 
 {
-    this->SubscribeScreen(simpit, TelemetryModuleScreenEnum::Telemetry);
+    this->ResetData();
+    this->screen = TelemetryModuleScreenEnum::Idle;
     this->TransmitDataToScreen();
 }
 
 void Telemetry2Module::_unsubscribe(Simpit *simpit) 
 {
-    this->SubscribeScreen(simpit, TelemetryModuleScreenEnum::NoSignal);
+    this->UnsubscribeScreen(simpit, this->screen);
+
+    this->ResetData();
+    this->screen = TelemetryModuleScreenEnum::NoSignal;
     this->TransmitDataToScreen();
 }
 
@@ -51,7 +55,7 @@ void Telemetry2Module::_update(Simpit *simpit)
 {
     TelemetryModuleScreenEnum latest_screen;
     ModuleHelper::WireRead(MODULE_TELEMETRY_CTRL, sizeof(TelemetryModuleScreenEnum), &latest_screen);
-    if(latest_screen != this->screen && latest_screen != TelemetryModuleScreenEnum::NoSignal)
+    if(latest_screen != this->screen && latest_screen < TelemetryModuleScreenEnum::NoSignal)
     {
         this->SubscribeScreen(simpit, latest_screen);
     }
@@ -199,6 +203,8 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::LiquidFuel *dat
     if(this->screen != TelemetryModuleScreenEnum::Fuel) return;
 
     this->data.Fuel.LiquidFuel = this->GetRatio(data->Available, data->Max);
+    this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Resource::Incoming::Oxidizer *data) 
@@ -207,6 +213,8 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::Oxidizer *data)
     if(this->screen != TelemetryModuleScreenEnum::Fuel) return;
 
     this->data.Fuel.Oxidizer = this->GetRatio(data->Available, data->Max);
+    this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Resource::Incoming::SolidFuel *data)
@@ -215,6 +223,8 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::SolidFuel *data
     if(this->screen != TelemetryModuleScreenEnum::Fuel) return;
 
     this->data.Fuel.SolidFuel = this->GetRatio(data->Available, data->Max);
+    this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Resource::Incoming::ElectricCharge *data)
@@ -223,6 +233,8 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::ElectricCharge 
     if(this->screen != TelemetryModuleScreenEnum::Fuel) return;
 
     this->data.Fuel.ElectricCharge = this->GetRatio(data->Available, data->Max);
+    this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Resource::Incoming::XenonGas *data)
@@ -231,6 +243,8 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::XenonGas *data)
     if(this->screen != TelemetryModuleScreenEnum::Fuel) return;
 
     this->data.Fuel.XenonGas = this->GetRatio(data->Available, data->Max);
+    this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Resource::Incoming::MonoPropellant *data)
@@ -240,6 +254,7 @@ void Telemetry2Module::Process(void *sender, Resource::Incoming::MonoPropellant 
 
     this->data.Fuel.MonoPropellant = this->GetRatio(data->Available, data->Max);
     this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Vessel::Incoming::Apsides *data)
@@ -249,6 +264,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Apsides *data)
         this->data.Telemetry.Apsides.SetValue(data->Apoapsis);
         this->data.Telemetry.Periapsis.SetValue(data->Periapsis);
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -258,6 +274,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Apsides *data)
         this->data.Maneuver.Apsides.SetValue(data->Apoapsis);
         this->data.Maneuver.Periapsis.SetValue(data->Periapsis);
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -267,6 +284,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Apsides *data)
         this->data.Orbit.Apsides.SetValue(data->Apoapsis);
         this->data.Orbit.Periapsis.SetValue(data->Periapsis);
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -279,6 +297,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::ApsidesTime *data
         this->data.Telemetry.ApsidesTime = data->Apoapsis;
         this->data.Telemetry.PeriapsisTime = data->Periapsis;
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -288,6 +307,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::ApsidesTime *data
         this->data.Maneuver.ApsidesTime = data->Apoapsis;
         this->data.Maneuver.PeriapsisTime = data->Periapsis;
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -297,6 +317,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::ApsidesTime *data
         this->data.Orbit.ApsidesTime = data->Apoapsis;
         this->data.Orbit.PeriapsisTime = data->Periapsis;
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -308,6 +329,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::DeltaV *data)
     {
         this->data.Telemetry.ShipDeltaV.SetValue(data->TotalDeltaV);
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -316,6 +338,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::DeltaV *data)
     {
         this->data.Maneuver.ShipDeltaV.SetValue(data->TotalDeltaV);
         this->dirty = true;
+        this->signal = true;
 
         return;
     }
@@ -329,6 +352,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Altitude *data)
     this->data.Telemetry.Altitude.SetValue(data->Alt);
     this->data.Telemetry.SurfaceAltitude.SetValue(data->SurfAlt);
     this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Vessel::Incoming::Velocity *data)
@@ -340,6 +364,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Velocity *data)
     this->data.Telemetry.VelocitySurface.SetValue(data->Surface);
     this->data.Telemetry.VelocityVertical.SetValue(data->Vertical);
     this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Vessel::Incoming::Maneuver *data)
@@ -352,6 +377,7 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::Maneuver *data)
     this->data.Maneuver.DurationNextManeuver = data->DurationNextManeuver;
     this->data.Maneuver.DeltaVTotal.SetValue(data->DeltaVTotal);
     this->dirty = true;
+    this->signal = true;
 };
 
 void Telemetry2Module::Process(void *sender, Vessel::Incoming::OrbitInfo *data)
@@ -364,4 +390,5 @@ void Telemetry2Module::Process(void *sender, Vessel::Incoming::OrbitInfo *data)
     this->data.Orbit.Inclination.SetValue(data->Inclination);
     this->data.Orbit.Period = data->Period;
     this->dirty = true;
+    this->signal = true;
 };
