@@ -1,1 +1,0 @@
-arduino-cli upload -p COM3 -b arduino:avr:nano:cpu=atmega328old --input-dir ./../build/arduino.avr.nano
