@@ -161,25 +161,22 @@ void onI2CReceive(int byteCount)
   TelemetryModuleScreenEnum incoming_screen;
   Wire.readBytes((byte*)&incoming_screen, 1);
 
-  if(screen != incoming_screen)
+  if(incoming_screen == TelemetryModuleScreenEnum::NoSignal)
   {
-    if(incoming_screen == TelemetryModuleScreenEnum::NoSignal)
+    signal = false;
+  }
+  else if(incoming_screen >= TelemetryModuleScreenEnum::NoSignal)
+  {
+    if(screen >= TelemetryModuleScreenEnum::NoSignal)
     {
-      signal = false;
+      set_screen(TelemetryModuleScreenEnum::Telemetry);
     }
-    else if(incoming_screen >= TelemetryModuleScreenEnum::NoSignal)
-    {
-      if(screen >= TelemetryModuleScreenEnum::NoSignal)
-      {
-        set_screen(TelemetryModuleScreenEnum::Telemetry);
-      }
 
-      signal = true;
-    }
-    else
-    {
-      set_screen(incoming_screen);
-    }
+    signal = true;
+  }
+  else
+  {
+    set_screen(incoming_screen);
   }
 
   Wire.readBytes((byte*)&data, sizeof(TelemetryModuleData));

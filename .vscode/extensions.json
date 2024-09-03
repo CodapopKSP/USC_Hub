@@ -1,6 +1,6 @@
 {
     "recommendations": [
-        "vsciot-vscode.vscode-arduino",
-        "ms-vscode.cpptools-extension-pack"
+        "ms-vscode.cpptools-extension-pack",
+        "vscode-arduino.vscode-arduino-community"
     ]
 }
