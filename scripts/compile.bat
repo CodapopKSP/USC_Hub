@@ -1,1 +1,1 @@
-arduino-cli compile -b arduino:avr:nano -e ./..
+arduino-cli compile -b arduino:avr:nano:cpu=atmega328old -e ./..
