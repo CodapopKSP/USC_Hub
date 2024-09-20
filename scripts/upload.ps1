@@ -20,6 +20,7 @@ if (Get-Command $arduinoCli -errorAction SilentlyContinue)
 }
 else {
     Write-Error "Command '$arduinoCli' not found! Ensure you have the Arduino CLI installed to continue.$([Environment]::NewLine)Download at: https://arduino.github.io/arduino-cli/1.0/installation/#latest-release"
+    Start-Sleep -s 60
     exit
 }
 
@@ -42,6 +43,7 @@ foreach($asset in $latest.assets)
 if($binUrl -eq "")
 {
     Write-Error "No matching asset found: $($binFileName)"
+    Start-Sleep -s 60
     exit
 }
 
