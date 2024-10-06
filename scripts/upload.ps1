@@ -2,9 +2,9 @@
 # - BEGIN CONFIG -
 # ----------------
 
-$port = "COM3"
+$port = "COM15"
 $board = "arduino:avr:nano"
-$bootloader = "atmega328old"
+$bootloader = "atmega328"
 
 $repository = "https://api.github.com/repos/rettoph/USC_HUB_TEST/releases/latest"
 
@@ -24,7 +24,7 @@ else {
     exit
 }
 
-$latest = ConvertFrom-Json (Invoke-WebRequest -Uri $repository -HttpVersion 2.0)
+$latest = ConvertFrom-Json (Invoke-WebRequest -Uri $repository)
 
 $binFileName = "USC_HUB_$($latest.tag_name)_$($board.replace(":", "."))_$($bootloader).tar.gz"
 $binUrl = ""
@@ -47,17 +47,17 @@ if($binUrl -eq "")
     exit
 }
 
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\.archive\
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\.archive
 Write-Host "Downloading $($binFileName) at $($binUrl)..."
 Invoke-WebRequest $binUrl -OutFile $PSScriptRoot\.archive\$binFileName
 
 Start-Sleep 1
 
 Write-Host "Extracting $($binFileName)..."
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\.bin\
-tar -xvzf $PSScriptRoot\.archive\$binFileName -C $PSScriptRoot\.bin\
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\.bin
+tar -xvzf $PSScriptRoot\.archive\$binFileName -C $PSScriptRoot\.bin
 
 Start-Sleep 1
 
 Write-Host "Uploading to Arduino on port $($port)..."
-arduino-cli upload -p $port -b "$($board):cpu=$($bootloader)" --input-dir "$PSScriptRoot\.bin\"
+arduino-cli upload -p $port -b "$($board):cpu=$($bootloader)" --input-dir "$PSScriptRoot\.bin"
