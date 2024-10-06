@@ -2,9 +2,9 @@
 # - BEGIN CONFIG -
 # ----------------
 
-$port = "COM15"
-$board = "arduino:avr:nano"
-$bootloader = "atmega328"
+$port = "COM5"
+$board = "arduino:avr:micro"
+$bootloader = "atmega32u4"
 
 $repository = "https://api.github.com/repos/rettoph/USC_HUB_TEST/releases/latest"
 
