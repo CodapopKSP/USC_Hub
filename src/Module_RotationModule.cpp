@@ -81,13 +81,13 @@ void RotationModule::_update(Simpit *simpit)
 
     if(BitHelper::FlagTriggered(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Gear))
     {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Brakes, true);
-        simpit->Log(F("Brakes set."));
+        KerbalSimpitHelper::SetAction(ActionGroupFlags::Gear, true);
+        simpit->Log(F("Gear set."));
     }
     if(BitHelper::FlagUnset(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Gear))
     {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Brakes, false);
-        simpit->Log(F("Brakes released."));
+        KerbalSimpitHelper::SetAction(ActionGroupFlags::Gear, false);
+        simpit->Log(F("Gear released."));
     }
 
     if(BitHelper::FlagTriggered(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Light))
