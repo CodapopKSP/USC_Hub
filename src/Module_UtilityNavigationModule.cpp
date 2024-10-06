@@ -4,7 +4,7 @@
 #include "ModuleHelper.h"
 #include "BitHelper.h"
 
-#define MODULE_NAVIGATION_CTRL 26
+#define MODULE_UTILITYNAVIGATION_CTRL 26
 
 #define MODULE_UTILITYNAVIGATION_KEY_B 0x42
 #define MODULE_UTILITYNAVIGATION_KEY_F 0x46
@@ -21,7 +21,7 @@ UtilityNavigationModule::UtilityNavigationModule() : ModuleBase(F("UtilityNaviga
 
 bool UtilityNavigationModule::_connect() const
 {
-    return ModuleHelper::CheckConnection(MODULE_NAVIGATION_CTRL);
+    return ModuleHelper::CheckConnection(MODULE_UTILITYNAVIGATION_CTRL);
 }
 
 byte UtilityNavigationModule::_alloc() const
@@ -45,7 +45,7 @@ void UtilityNavigationModule::_unsubscribe(Simpit *simpit) {}
 void UtilityNavigationModule::_update(Simpit *simpit)
 {
     UtilityNavigationModuleFlags latest_flags;
-    ModuleHelper::WireRead(MODULE_NAVIGATION_CTRL, sizeof(UtilityNavigationModuleFlags), &latest_flags);
+    ModuleHelper::WireRead(MODULE_UTILITYNAVIGATION_CTRL, sizeof(UtilityNavigationModuleFlags), &latest_flags);
 
     if(latest_flags == this->flags)
     { // No change

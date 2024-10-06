@@ -14,8 +14,9 @@
 #include "Module_ThrottleModule.h"
 #include "Module_TranslationModule.h"
 #include "Module_RotationModule.h"
+#include "Module_UtilityNavigationModule.h"
 
-ModuleBase* modules[11] = { 
+ModuleBase* modules[12] = { 
     new NavigationModule(),
     new ActionModule(),
     new RotationTranslationModule(),
@@ -26,7 +27,8 @@ ModuleBase* modules[11] = {
     new TimeModule(),
     new ThrottleModule(),
     new TranslationModule(),
-    new RotationModule()
+    new RotationModule(),
+    new UtilityNavigationModule()
 };
 
 Simpit* Modules::Initialize(Stream &serial)
