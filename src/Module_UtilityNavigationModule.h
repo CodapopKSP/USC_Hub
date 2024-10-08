@@ -1,7 +1,7 @@
 #ifndef Module_UtilityNavigationModule_h
 #define Module_UtilityNavigationModule_h
 
-#include <Simpit.h>
+#include <SimpitRefactored.h>
 #include "ModuleBase.h"
 
 enum struct UtilityNavigationModuleFlags : byte

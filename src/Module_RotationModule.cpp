@@ -4,7 +4,7 @@
 #include "BitHelper.h"
 #include "StructHelper.h"
 #include "AnalogHelper.h"
-#include <KerbalSimpitHelper.h>
+#include <KerbalSimpitRefactoredHelper.h>
 
 #define MODULE_ROTATION_THROTTLE_CTRL 49
 
