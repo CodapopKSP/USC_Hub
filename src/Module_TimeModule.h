@@ -1,8 +1,8 @@
 #ifndef Module_TimeModule_h
 #define Module_TimeModule_h
 
-#include <Simpit.h>
-#include <KerbalSimpitMessageTypes.h>
+#include <SimpitRefactored.h>
+#include <KerbalSimpitRefactoredMessageTypes.h>
 #include "ModuleBase.h"
 #include "IncomingMessageSubscriber.h"
 

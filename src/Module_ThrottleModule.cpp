@@ -1,6 +1,6 @@
 #include "Module_ThrottleModule.h"
 
-#include <KerbalSimpitHelper.h>
+#include <KerbalSimpitRefactoredHelper.h>
 #include "ModuleHelper.h"
 #include "BitHelper.h"
 #include "StructHelper.h"

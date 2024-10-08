@@ -1,9 +1,9 @@
 #include <Wire.h>
 
 #include <Wire.h>
-#include <Simpit.h>
-#include "KerbalSimpit.h"
-#include "KerbalSimpitMessageTypes.h"
+#include <SimpitRefactored.h>
+#include "KerbalSimpitRefactored.h"
+#include "KerbalSimpitRefactoredMessageTypes.h"
 #include "settings.h"
 #include "src/Modules.h"
 #include "src/MemoryHelper.h"

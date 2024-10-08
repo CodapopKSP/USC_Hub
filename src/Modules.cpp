@@ -1,7 +1,7 @@
 #include "Modules.h"
 
 #include <Wire.h>
-#include <KerbalSimpitHelper.h>
+#include <KerbalSimpitRefactoredHelper.h>
 #include "ModuleBase.h"
 #include "Module_NavigationModule.h"
 #include "Module_ActionModule.h"

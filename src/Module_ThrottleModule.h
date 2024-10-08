@@ -1,8 +1,8 @@
 #ifndef Module_ThrottleModule_h
 #define Module_ThrottleModule_h
 
-#include <Simpit.h>
-#include <KerbalSimpitMessageTypes.h>
+#include <SimpitRefactored.h>
+#include <KerbalSimpitRefactoredMessageTypes.h>
 #include "ModuleBase.h"
 #include "IncomingMessageSubscriber.h"
 

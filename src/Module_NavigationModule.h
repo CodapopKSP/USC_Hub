@@ -1,7 +1,7 @@
 #ifndef Module_NavigationModule_h
 #define Module_NavigationModule_h
 
-#include <Simpit.h>
+#include <SimpitRefactored.h>
 #include "ModuleBase.h"
 
 enum struct NavigationModuleFlags : byte

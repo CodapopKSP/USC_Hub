@@ -1,6 +1,6 @@
 #include "Module_TimeModule.h"
 
-#include <KerbalSimpitHelper.h>
+#include <KerbalSimpitRefactoredHelper.h>
 #include "ModuleHelper.h"
 #include "BitHelper.h"
 

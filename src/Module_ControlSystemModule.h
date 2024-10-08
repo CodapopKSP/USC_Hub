@@ -1,8 +1,8 @@
 #ifndef Module_ControlSystemModule_h
 #define Module_ControlSystemModule_h
 
-#include <Simpit.h>
-#include <KerbalSimpitMessageTypes.h>
+#include <SimpitRefactored.h>
+#include <KerbalSimpitRefactoredMessageTypes.h>
 #include "ModuleBase.h"
 #include "IncomingMessageSubscriber.h"
 

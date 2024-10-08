@@ -54,8 +54,8 @@ Invoke-WebRequest $binUrl -OutFile $PSScriptRoot\.archive\$binFileName
 Start-Sleep 1
 
 Write-Host "Extracting $($binFileName)..."
-New-Item -ItemType Directory -Force -Path $PSScriptRoot\.bin\
-tar -xvzf $PSScriptRoot\.archive\$binFileName -C $PSScriptRoot\.bin\
+New-Item -ItemType Directory -Force -Path $PSScriptRoot\.bin
+tar -xvzf $PSScriptRoot\.archive\$binFileName -C $PSScriptRoot\.bin
 
 Start-Sleep 1
 

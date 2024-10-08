@@ -1,6 +1,6 @@
 #include "Module_NavigationModule.h"
 
-#include <KerbalSimpitHelper.h>
+#include <KerbalSimpitRefactoredHelper.h>
 #include "ModuleHelper.h"
 #include "BitHelper.h"
 

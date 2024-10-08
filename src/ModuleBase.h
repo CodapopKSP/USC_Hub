@@ -1,8 +1,8 @@
 #ifndef ModuleBase_h
 #define ModuleBase_h
 
-#include <KerbalSimpitMessageTypes.h>
-#include <Simpit.h>
+#include <KerbalSimpitRefactoredMessageTypes.h>
+#include <SimpitRefactored.h>
 
 class ModuleBase
 {
