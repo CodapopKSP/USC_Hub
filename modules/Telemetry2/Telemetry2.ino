@@ -307,13 +307,9 @@ void draw_no_signal_screen()
 {
   int earthStep = (frame / 5) % epd_bitmap_Earth_allArray_LEN;
   u8g2.drawXBMP(72, 8, 48, 48, epd_bitmap_Earth_allArray[earthStep]);
-  
-  if((frame / 10) % 2 == 0)
-  {
-    u8g2.setFont(u8g2_font_10x20_tr);
-    draw_string("No", 34, 31, true);
-    draw_string("Signal", 34, 45, true);
-  }
+  u8g2.setFont(u8g2_font_10x20_tr);
+  draw_string("No", 34, 31, true);
+  draw_string("Signal", 34, 45, true);
 }
 
 void draw_fuel_screen(TelemetryModuleFuelData fuel_data)
