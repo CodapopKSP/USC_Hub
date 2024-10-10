@@ -6,7 +6,7 @@
 #include "AnalogHelper.h"
 #include <KerbalSimpitRefactoredHelper.h>
 
-#define MODULE_ROTATION_THROTTLE_CTRL 49
+#define MODULE_ROTATION_CTRL 49
 
 DECLARE_ENUM_BITWISE_OPERATORS(RotationModuleStateFlags, byte)
 DECLARE_STRUCT_OPERATORS(RotationModuleData);
@@ -15,7 +15,7 @@ RotationModule::RotationModule() : ModuleBase(F("Rotation")) {};
 
 bool RotationModule::_connect() const
 {
-    return ModuleHelper::CheckConnection(MODULE_ROTATION_THROTTLE_CTRL);
+    return ModuleHelper::CheckConnection(MODULE_ROTATION_CTRL);
 }
 
 byte RotationModule::_alloc() const
@@ -38,7 +38,7 @@ void RotationModule::_unsubscribe(Simpit *simpit)
 void RotationModule::_update(Simpit *simpit)
 {
     RotationModuleData latest_data;
-    ModuleHelper::WireRead(MODULE_ROTATION_THROTTLE_CTRL, sizeof(RotationModuleData), &latest_data);
+    ModuleHelper::WireRead(MODULE_ROTATION_CTRL, sizeof(RotationModuleData), &latest_data);
 
     // Bytes come in reversed order from the module, this corrects them
     // Is this an endian issue? Doesnt feel like it...
@@ -79,27 +79,25 @@ void RotationModule::_update(Simpit *simpit)
         simpit->Log(F("Trim reset."));
     }
 
-    if(BitHelper::FlagTriggered(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Gear))
+    bool flag_set;
+    if(BitHelper::FlagChanged(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Gear, flag_set))
     {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Gear, true);
-        simpit->Log(F("Gear set."));
-    }
-    if(BitHelper::FlagUnset(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Gear))
-    {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Gear, false);
-        simpit->Log(F("Gear released."));
+        KerbalSimpitHelper::SetAction(ActionGroupFlags::Gear, flag_set);
     }
 
-    if(BitHelper::FlagTriggered(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Light))
+    if (BitHelper::FlagTriggered(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Light))
     {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Light, true);
-        simpit->Log(F("Lights on."));
+        // Toggle the light state within `data`
+        _lightState = !_lightState;
+        
+        // Set the light action with the updated state
+        KerbalSimpitHelper::SetAction(ActionGroupFlags::Light, _lightState);
+        
+        // Log the updated light state (0 for off, 1 for on)
+        simpit->Log(F("Light toggled."));
     }
-    if(BitHelper::FlagUnset(this->data.StateFlags, latest_data.StateFlags, RotationModuleStateFlags::Light))
-    {
-        KerbalSimpitHelper::SetAction(ActionGroupFlags::Light, false);
-        simpit->Log(F("Lights off."));
-    }
+
+
 
     if(
         force_update_axes ||
