@@ -47,9 +47,9 @@ void TranslationModule::_update(Simpit *simpit)
     AnalogHelper::SwapBytes(&input_data.Axis3);
 
     // Convert axes as needed. This does not invert them
-    input_data.Axis1 = AnalogHelper::MapAxis(input_data.Axis1);
+    input_data.Axis1 = -AnalogHelper::MapAxis(input_data.Axis1);
     input_data.Axis2 = AnalogHelper::MapAxis(input_data.Axis2);
-    input_data.Axis3 = AnalogHelper::MapAxis(input_data.Axis3);
+    input_data.Axis3 = -AnalogHelper::MapAxis(input_data.Axis3);
 
     if(input_data == this->data)
     { // No changes, so no action needed
