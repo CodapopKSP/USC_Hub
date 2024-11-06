@@ -5,6 +5,7 @@
 #include "BitHelper.h"
 
 #define MODULE_UTILITYNAVIGATION_CTRL 26
+#define MODULE_UTILITYNAVIGATION_DSPL 23
 
 #define MODULE_UTILITYNAVIGATION_KEY_B 0x42
 #define MODULE_UTILITYNAVIGATION_KEY_F 0x46
@@ -31,7 +32,7 @@ byte UtilityNavigationModule::_alloc() const
 
 void UtilityNavigationModule::_register(Simpit *simpit)
 {
-
+    simpit->RegisterIncomingSubscriber<Resource::Incoming::LiquidFuel>(this);
 }
 
 void UtilityNavigationModule::_subscribe(Simpit *simpit) 
@@ -90,5 +91,17 @@ void UtilityNavigationModule::_update(Simpit *simpit)
         KerbalSimpitHelper::KeyboardInput(MODULE_UTILITYNAVIGATION_KEY_U);
     }
 
+    Wire.beginTransmission(MODULE_UTILITYNAVIGATION_DSPL);
+    Wire.write(0);
+    Wire.write(2);
+    Wire.endTransmission();
+
     this->flags = latest_flags;
 }
+
+void UtilityNavigationModule::Process(void *sender, Resource::Incoming::LiquidFuel *data)
+{
+    int myEVA_available = data->Available * 100.00;
+    int myEVA_total = data->Max * 100.00;
+    this->EVAprop = map(myEVA_available, 0, myEVA_total, 1, 10);
+};
