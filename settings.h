@@ -2,7 +2,7 @@
 #define settings_h
 
 // Interval in ms between module update calls
-#define MODULE_UPDATE_INTERVAL 100
+#define MODULE_UPDATE_INTERVAL 10
 
 // Determins when button events are triggered.
 // true = as soon as the button is released
