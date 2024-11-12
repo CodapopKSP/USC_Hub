@@ -27,7 +27,7 @@ bool UtilityNavigationModule::_connect() const
 
 byte UtilityNavigationModule::_alloc() const
 {
-    return 0;
+    return 1;
 }
 
 void UtilityNavigationModule::_register(Simpit *simpit)
@@ -50,6 +50,9 @@ void UtilityNavigationModule::_update(Simpit *simpit)
 
     if(latest_flags == this->flags)
     { // No change
+        Wire.beginTransmission(MODULE_UTILITYNAVIGATION_DSPL);
+        Wire.write(this->EVAprop);
+        Wire.endTransmission();
         return;
     }
 
@@ -90,11 +93,6 @@ void UtilityNavigationModule::_update(Simpit *simpit)
     {
         KerbalSimpitHelper::KeyboardInput(MODULE_UTILITYNAVIGATION_KEY_U);
     }
-
-    Wire.beginTransmission(MODULE_UTILITYNAVIGATION_DSPL);
-    Wire.write(0);
-    Wire.write(2);
-    Wire.endTransmission();
 
     this->flags = latest_flags;
 }

@@ -24,7 +24,7 @@ class UtilityNavigationModule : public ModuleBase,
     private:
         UtilityNavigationModuleFlags flags;
         bool UtilityNavigation_map_on;
-        int16_t EVAprop;
+        int EVAprop;
 
     protected:
         virtual bool _connect() const override;
