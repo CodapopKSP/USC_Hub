@@ -19,12 +19,13 @@ enum struct UtilityNavigationModuleFlags : byte
 };
 
 class UtilityNavigationModule : public ModuleBase,
-    public IncomingMessageSubscriber<Resource::Incoming::LiquidFuel>
+    public IncomingMessageSubscriber<Resource::Incoming::EvaPropellant>,
+    public IncomingMessageSubscriber<Environment::Incoming::FlightStatus>
 {
     private:
         UtilityNavigationModuleFlags flags;
         bool UtilityNavigation_map_on;
-        int EVAprop;
+        bool onEVA;
 
     protected:
         virtual bool _connect() const override;
@@ -36,6 +37,7 @@ class UtilityNavigationModule : public ModuleBase,
 
     public:
         UtilityNavigationModule();
-        virtual void Process(void *sender, Resource::Incoming::LiquidFuel *data) override;
+        virtual void Process(void *sender, Environment::Incoming::FlightStatus *data) override;
+        virtual void Process(void *sender, Resource::Incoming::EvaPropellant *data) override;
 };
 #endif

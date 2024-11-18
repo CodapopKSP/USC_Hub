@@ -17,6 +17,7 @@
 
 
 DECLARE_ENUM_BITWISE_OPERATORS(UtilityNavigationModuleFlags, byte)
+DECLARE_ENUM_BITWISE_OPERATORS(Environment::Incoming::FlightStatus::StatusFlags, byte)
 
 UtilityNavigationModule::UtilityNavigationModule() : ModuleBase(F("UtilityNavigation")) {};
 
@@ -27,21 +28,25 @@ bool UtilityNavigationModule::_connect() const
 
 byte UtilityNavigationModule::_alloc() const
 {
-    return 1;
+    return 2;
 }
 
 void UtilityNavigationModule::_register(Simpit *simpit)
 {
-    simpit->RegisterIncomingSubscriber<Resource::Incoming::LiquidFuel>(this);
+    simpit->RegisterIncomingSubscriber<Environment::Incoming::FlightStatus>(this);
+    simpit->RegisterIncomingSubscriber<Resource::Incoming::EvaPropellant>(this);
 }
 
 void UtilityNavigationModule::_subscribe(Simpit *simpit) 
 {
-    // Reset module cache
+    simpit->SubscribeIncoming<Environment::Incoming::FlightStatus>();
     this->flags = UtilityNavigationModuleFlags::None;
 }
 
-void UtilityNavigationModule::_unsubscribe(Simpit *simpit) {}
+void UtilityNavigationModule::_unsubscribe(Simpit *simpit) 
+{
+    simpit->UnsubscribeIncoming<Environment::Incoming::FlightStatus>();
+}
 
 void UtilityNavigationModule::_update(Simpit *simpit)
 {
@@ -50,9 +55,6 @@ void UtilityNavigationModule::_update(Simpit *simpit)
 
     if(latest_flags == this->flags)
     { // No change
-        Wire.beginTransmission(MODULE_UTILITYNAVIGATION_DSPL);
-        Wire.write(this->EVAprop);
-        Wire.endTransmission();
         return;
     }
 
@@ -97,9 +99,28 @@ void UtilityNavigationModule::_update(Simpit *simpit)
     this->flags = latest_flags;
 }
 
-void UtilityNavigationModule::Process(void *sender, Resource::Incoming::LiquidFuel *data)
+void UtilityNavigationModule::Process(void *sender, Environment::Incoming::FlightStatus *data)
 {
-    int myEVA_available = data->Available * 100.00;
-    int myEVA_total = data->Max * 100.00;
-    this->EVAprop = map(myEVA_available, 0, myEVA_total, 1, 10);
+    Simpit *simpit = (Simpit*)sender;
+    if (BitHelper::HasFlag(data->Status, Environment::Incoming::FlightStatus::StatusFlags::IsEva))
+    {
+        simpit->SubscribeIncoming<Resource::Incoming::EvaPropellant>();
+        this->onEVA = true;
+        simpit->Log("EVA");
+    }
+    else if (this->onEVA==true)
+    {
+        byte prop = 0;
+        ModuleHelper::WireWrite(MODULE_UTILITYNAVIGATION_DSPL, sizeof(byte), &prop);
+        simpit->UnsubscribeIncoming<Resource::Incoming::EvaPropellant>();
+        this->onEVA = false;
+    }
+};
+
+void UtilityNavigationModule::Process(void *sender, Resource::Incoming::EvaPropellant *data)
+{
+    Simpit *simpit = (Simpit*)sender;
+    simpit->Log("Test");
+    byte prop = map(data->Available, 0, data->Max, 1, 10);
+    ModuleHelper::WireWrite(MODULE_UTILITYNAVIGATION_DSPL, sizeof(byte), &prop);
 };
