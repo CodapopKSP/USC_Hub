@@ -288,7 +288,7 @@ void draw_spash_screen()
   u8g2.drawXBMP(0, 0, 51, 63, epd_bitmap_SplashKSPLogo);
 
   u8g2.setFont(u8g2_font_10x20_tr);
-  draw_string("KerbalOS", 88, 15, true);
+  draw_string("UntitledSpaceCraft_OS", 88, 15, true);
 
   u8g2.setFont(u8g2_font_4x6_tr);
   draw_string(message, 60, 35, false);

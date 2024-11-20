@@ -1,6 +1,6 @@
 #include <avr/pgmspace.h>
 
-const char BootSequenceString_00[] PROGMEM = "Loading Kerbnal";
+const char BootSequenceString_00[] PROGMEM = "Loading Kerbal";
 const char BootSequenceString_01[] PROGMEM = "Loading ENV_VARS";
 const char BootSequenceString_02[] PROGMEM = "Begin System Check";
 const char BootSequenceString_03[] PROGMEM = "Mount File System";
@@ -19,6 +19,8 @@ const char BootSequenceString_15[] PROGMEM = "Ignoring.........OK";
 const char BootSequenceString_16[] PROGMEM = "Loading Users...";
 const char BootSequenceString_17[] PROGMEM = "/usr/rettoph";
 const char BootSequenceString_18[] PROGMEM = "/usr/CodapopKSP";
+const char BootSequenceString_18[] PROGMEM = "/usr/MattLowne";
+const char BootSequenceString_18[] PROGMEM = "/usr/SpaceChip";
 const char BootSequenceString_19[] PROGMEM = "Load UntitledSpaceCraft";
 const char BootSequenceString_20[] PROGMEM = "Done.";
 
