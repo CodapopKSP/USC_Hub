@@ -106,7 +106,6 @@ void UtilityNavigationModule::Process(void *sender, Environment::Incoming::Fligh
     {
         simpit->SubscribeIncoming<Resource::Incoming::EvaPropellant>();
         this->onEVA = true;
-        simpit->Log("EVA");
     }
     else if (this->onEVA==true)
     {
@@ -119,8 +118,8 @@ void UtilityNavigationModule::Process(void *sender, Environment::Incoming::Fligh
 
 void UtilityNavigationModule::Process(void *sender, Resource::Incoming::EvaPropellant *data)
 {
-    Simpit *simpit = (Simpit*)sender;
-    simpit->Log("Test");
-    byte prop = map(data->Available, 0, data->Max, 1, 10);
+    float EVAMax = data->Max * 100.00;
+    float EVAAvailable = data->Available * 100.00;
+    byte prop = map(EVAAvailable, 0, EVAMax, 1, 10);
     ModuleHelper::WireWrite(MODULE_UTILITYNAVIGATION_DSPL, sizeof(byte), &prop);
 };
