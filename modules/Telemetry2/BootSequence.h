@@ -19,10 +19,10 @@ const char BootSequenceString_15[] PROGMEM = "Ignoring.........OK";
 const char BootSequenceString_16[] PROGMEM = "Loading Users...";
 const char BootSequenceString_17[] PROGMEM = "/usr/rettoph";
 const char BootSequenceString_18[] PROGMEM = "/usr/CodapopKSP";
-const char BootSequenceString_18[] PROGMEM = "/usr/MattLowne";
-const char BootSequenceString_18[] PROGMEM = "/usr/SpaceChip";
-const char BootSequenceString_19[] PROGMEM = "Load UntitledSpaceCraft";
-const char BootSequenceString_20[] PROGMEM = "Done.";
+const char BootSequenceString_19[] PROGMEM = "/usr/MattLowne";
+const char BootSequenceString_20[] PROGMEM = "/usr/SpaceChip";
+const char BootSequenceString_21[] PROGMEM = "Load UntitledSpaceCraft";
+const char BootSequenceString_22[] PROGMEM = "Done.";
 
 const char *const BootSequenceStringTable[] PROGMEM = {
     BootSequenceString_00,
@@ -46,6 +46,8 @@ const char *const BootSequenceStringTable[] PROGMEM = {
     BootSequenceString_18,
     BootSequenceString_19,
     BootSequenceString_20,
+    BootSequenceString_21,
+    BootSequenceString_22,
 };
 
 const char SplashSequenceString_00[] PROGMEM = "Ordering snacks...";
