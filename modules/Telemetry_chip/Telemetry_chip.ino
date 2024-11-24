@@ -266,7 +266,7 @@ void draw_boot_screen()
   for(int i = bootSequenceStart; i < bootSequenceEnd; i++)
   {
     strcpy_P(buffer, (char *)pgm_read_ptr(&(BootSequenceStringTable[i])));
-    draw_string("[kOS] " + (String)buffer, 1, 8 * line++, false);
+    draw_string("[USC_OS] " + (String)buffer, 1, 8 * line++, false);
   }
 
   if(frame >= 15)
@@ -285,17 +285,19 @@ void draw_spash_screen()
     message += ".";
   }
 
-  u8g2.drawXBMP(28, 0, 64, 64, epd_bitmap_SplashKSPLogo);
+  u8g2.drawXBMP(28, 0, 64, 64, chip_logo);
 }
 
 void draw_no_signal_screen()
 {
-  int earthStep = (frame / 5) % epd_bitmap_Earth_allArray_LEN;
-  u8g2.drawXBMP(72, 8, 48, 48, epd_bitmap_Earth_allArray[earthStep]);
-  u8g2.setFont(u8g2_font_10x20_tr);
-  draw_string("No", 34, 31, true);
-  draw_string("Signal", 34, 45, true);
+  // Clear the display buffer to make it blank
+  u8g2.clearBuffer();
+  
+  // Send the cleared buffer to the display
+  u8g2.sendBuffer();
+  set_screen(TelemetryModuleScreenEnum::NoSignal);
 }
+
 
 void draw_fuel_screen(TelemetryModuleFuelData fuel_data)
 {
