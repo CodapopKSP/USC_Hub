@@ -20,6 +20,11 @@ void setup()
   Wire.begin();
   Serial.begin(115200);
 
+  digitalWrite(7, LOW);
+  delay(100);
+  digitalWrite(7, HIGH);
+  delay(1000);
+
   int preSimpitFreeMemory = MemoryHelper::FreeMemory();
   simpit = Modules::Initialize(Serial);
 
