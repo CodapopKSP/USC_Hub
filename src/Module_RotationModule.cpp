@@ -94,10 +94,13 @@ void RotationModule::_update(Simpit *simpit)
         KerbalSimpitHelper::SetAction(ActionGroupFlags::Light, _lightState);
         
         // Log the updated light state (0 for off, 1 for on)
-        simpit->Log(F("Light toggled."));
     }
 
-
+    // Detect what vessel types are active
+    bool is_plane = BitHelper::HasFlag(latest_data.StateFlags, RotationModuleStateFlags::Plane);
+    bool is_rover = BitHelper::HasFlag(latest_data.StateFlags, RotationModuleStateFlags::Rover);
+    bool is_rocket = is_plane == false && is_rover == false;
+    AnalogHelper::set_is_rover_global(is_rover);
 
     if(
         force_update_axes ||
@@ -105,14 +108,9 @@ void RotationModule::_update(Simpit *simpit)
         latest_data.Axis2 != this->data.Axis2 ||
         latest_data.Axis3 != this->data.Axis3
     )
+
     { // Stick change detected
-
-        // Detect what vessel types are active
-        bool is_plane = BitHelper::HasFlag(latest_data.StateFlags, RotationModuleStateFlags::Plane);
-        bool is_rover = BitHelper::HasFlag(latest_data.StateFlags, RotationModuleStateFlags::Rover);
-        bool is_rocket = is_plane == false && is_rover == false;
-        AnalogHelper::set_is_rover_global(is_rover);
-
+    
         // Wheel control is sent if the gear is active or rover mode is selected
         bool is_wheely = is_plane;
 

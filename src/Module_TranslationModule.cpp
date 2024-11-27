@@ -61,8 +61,9 @@ void TranslationModule::_update(Simpit *simpit)
     {
         // We add the current trim to itself so the values stack
         // does that feel good in game?
-        cruise_translation = input_data.Axis1 + cruise_translation;
+        cruise_translation = input_data.Axis2 + cruise_translation;
         force_update_axes = true;
+        simpit->Log(String(cruise_translation));
 
         simpit->Log(F("Cruise set. Release stick."));
     }
@@ -85,12 +86,16 @@ void TranslationModule::_update(Simpit *simpit)
     bool brakes_flag_set;
     if(BitHelper::FlagChanged(this->data.StateFlags, input_data.StateFlags, TranslationModuleStateFlags::BrakeButton, brakes_flag_set))
     {
+        cruise_translation = 0;
+        force_update_axes = true;
         KerbalSimpitHelper::SetAction(ActionGroupFlags::Brakes, brakes_flag_set);
     }
 
     bool brakes_switch_flag_set; // placeholder
     if(BitHelper::FlagChanged(this->data.StateFlags, input_data.StateFlags, TranslationModuleStateFlags::BrakeSwitch, brakes_switch_flag_set))
     { // Only broadcast if bits do not match
+        cruise_translation = 0;
+        force_update_axes = true;
         KerbalSimpitHelper::SetAction(ActionGroupFlags::Brakes, brakes_switch_flag_set == 1);
     }
 
@@ -123,8 +128,8 @@ void TranslationModule::_update(Simpit *simpit)
         { // This will broadcast wheel controls if gear is active or rover mode is set
             Vessel::Outgoing::WheelControl wheel_message = Vessel::Outgoing::WheelControl();
             wheel_message.Mask = 3;
-            wheel_message.Steer = -input_data.Axis3;
-            wheel_message.Throttle = AnalogHelper::SafeAdd(-input_data.Axis2, cruise_translation);
+            wheel_message.Steer = input_data.Axis1;
+            wheel_message.Throttle = AnalogHelper::SafeAdd(-input_data.Axis2, -cruise_translation);
 
             // Transmit wheel data
             simpit->WriteOutgoing(wheel_message);

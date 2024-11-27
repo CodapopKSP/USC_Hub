@@ -30,7 +30,7 @@ class RotationModule : public ModuleBase
         int16_t trim_axis_rotation1;
         int16_t trim_axis_rotation2;
         int16_t trim_axis_rotation3;
-        bool _lightState;
+        int _lightState;
 
         RotationModuleData data;
 
