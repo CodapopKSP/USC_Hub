@@ -4,6 +4,7 @@
 #include <KerbalSimpitRefactoredHelper.h>
 #include "ModuleBase.h"
 #include "Module_NavigationModule.h"
+#include "Module_NavigationTimeModule.h"
 #include "Module_ActionModule.h"
 #include "Module_RotationTranslationModule.h"
 #include "Module_ControlSystemModule.h"
@@ -16,8 +17,9 @@
 #include "Module_RotationModule.h"
 #include "Module_UtilityNavigationModule.h"
 
-ModuleBase* modules[12] = { 
+ModuleBase* modules[13] = { 
     new NavigationModule(),
+    new NavigationTimeModule(),
     new ActionModule(),
     new RotationTranslationModule(),
     new ControlSystemModule(),
