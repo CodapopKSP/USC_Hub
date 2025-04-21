@@ -2,7 +2,9 @@
 #define Module_NavigationTimeModule_h
 
 #include <SimpitRefactored.h>
+#include <KerbalSimpitRefactoredMessageTypes.h>
 #include "ModuleBase.h"
+#include "IncomingMessageSubscriber.h"
 
 enum struct NavigationTimeModuleFlags : byte
 {
