@@ -6,17 +6,17 @@
 #include "ModuleBase.h"
 #include "IncomingMessageSubscriber.h"
 
-enum struct ExecActionsGroupsModuleFlags : byte
+enum struct StageAbortModuleFlags : byte
 {
     None = 0,
     Stage = 1 << 0,
     Abort = 1 << 1,
 };
 
-class ExecActionsGroupsModule : public ModuleBase
+class StageAbortModule : public ModuleBase
 {
     private:
-        ExecActionsGroupsModuleFlags flags;
+        StageAbortModuleFlags flags;
 
     protected:
         virtual bool _connect() const override;
@@ -27,6 +27,6 @@ class ExecActionsGroupsModule : public ModuleBase
         virtual void _update(Simpit *simpit) override;
 
     public:
-        ExecActionsGroupsModule();
+        StageAbortModule();
 };
 #endif

@@ -63,36 +63,19 @@ void ExecActionsGroupsModule::_update(Simpit *simpit)
        delay(50);
        KerbalSimpitHelper::SetAction(ActionGroupFlags::Abort, false); // Not sure this is needed, but it was bugging me
     }
-
+    
     if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag1))
     {
+        Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
+        toggle.GroupIds[1] = 1;
         // Broadcast the flipped bits directly through simpit
-        simpit->WriteOutgoing(Vessel::Outgoing::CustomActionGroupToggle().GroupIds[1]);
-    }
-    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag2))
-    {
-        // Broadcast the flipped bits directly through simpit
-        simpit->WriteOutgoing(Vessel::Outgoing::CustomActionGroupToggle().GroupIds[2]);
-    }
-    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag3))
-    {
-        // Broadcast the flipped bits directly through simpit
-        simpit->WriteOutgoing(Vessel::Outgoing::CustomActionGroupToggle().GroupIds[3]);
-    }
-    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag4))
-    {
-        // Broadcast the flipped bits directly through simpit
-        simpit->WriteOutgoing(Vessel::Outgoing::CustomActionGroupToggle().GroupIds[4]);
-    }
-    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag5))
-    {
-        // Broadcast the flipped bits directly through simpit
-        simpit->WriteOutgoing(Vessel::Outgoing::CustomActionGroupToggle().GroupIds[5]);
+        simpit->WriteOutgoing(toggle);
     }
 
     // Store new value to detect change next update
     this->flags = latest_flags;
 }
+
 
 void ExecActionsGroupsModule::Process(void *sender, Vessel::Incoming::CustomActionGroups *data)
 {

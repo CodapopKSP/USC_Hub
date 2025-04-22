@@ -10,7 +10,7 @@ enum struct NavigationTimeModuleFlags : byte
 {
     None = 0,
     PhysicalWarp = 1 << 0,
-    Pause = 1 << 1,
+    ToManuever = 1 << 1,
     DecreaseTimeWarp = 1 << 2,
     IncreaseTimeWarp = 1 << 3,
     StopTimeWarp = 1 << 4,

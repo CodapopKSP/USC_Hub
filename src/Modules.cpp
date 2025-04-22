@@ -19,7 +19,7 @@
 #include "Module_Exec_Actions_Groups.h"
 
 
-ModuleBase* modules[14] = { 
+ModuleBase* modules[15] = { 
     new NavigationModule(),
     new NavigationTimeModule(),
     new ActionModule(),
@@ -27,13 +27,14 @@ ModuleBase* modules[14] = {
     new ControlSystemModule(),
     new Telemetry2Module(),
     new RotationThrottleModule(),
-    new ExecActionsGroupsModule(),
     new ActionModule(),
     new TimeModule(),
     new ThrottleModule(),
     new TranslationModule(),
     new RotationModule(),
     new UtilityNavigationModule(),
+    new StageAbortModule(),
+    new ExecActionsGroupsModule()
 };
 
 Simpit* Modules::Initialize(Stream &serial)

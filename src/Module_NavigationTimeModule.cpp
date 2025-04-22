@@ -11,6 +11,7 @@
 #define MODULE_NAVIGATIONTIME_KEY_RIGHTBRACKET 0xDD
 #define MODULE_NAVIGATIONTIME_KEY_M 0x4D
 #define MODULE_NAVIGATIONTIME_KEY_DOT 0x6E
+#define MODULE_TIME_KEY_FORWARDSLASH 0xBF
 #define MODULE_TIME_KEY_ALT 0x12
 #define MODULE_TIME_KEY_PERIOD 0xBE
 #define MODULE_TIME_KEY_COMMA 0xBC
@@ -85,7 +86,7 @@ void NavigationTimeModule::_update(Simpit *simpit)
             delay(50);
         }
 
-        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_PERIOD);
+        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_COMMA);
 
         if(this->physical_timewarp_mode)
         {
@@ -104,12 +105,12 @@ void NavigationTimeModule::_update(Simpit *simpit)
 
     if(BitHelper::FlagTriggered(this->flags, latest_flags, NavigationTimeModuleFlags::DecreaseTimeWarp))
     {
-        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_COMMA);
+        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_PERIOD);
     }
 
-    if(BitHelper::FlagTriggered(this->flags, latest_flags, NavigationTimeModuleFlags::Pause))
+    if(BitHelper::FlagTriggered(this->flags, latest_flags, NavigationTimeModuleFlags::ToManuever))
     {
-        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_ESC);
+        KerbalSimpitHelper::TimewarpTo(Warp::Outgoing::TimewarpTo::InstanceEnum::TimewarpToManeuver, TW_DELAY);
     }
 
     if(BitHelper::FlagChanged(this->flags, latest_flags, NavigationTimeModuleFlags::Map))
@@ -123,10 +124,16 @@ void NavigationTimeModule::_update(Simpit *simpit)
         }
     }
 
+    if(BitHelper::FlagTriggered(this->flags, latest_flags, NavigationTimeModuleFlags::StopTimeWarp))
+    {
+        KerbalSimpitHelper::KeyboardInput(MODULE_TIME_KEY_FORWARDSLASH);
+    }
+
     this->flags = latest_flags;
 }
 
 void NavigationTimeModule::Process(void *sender, Environment::Incoming::FlightStatus *data)
 {
-
+    bool warp_active = data->CurrentTWIndex != 0;
+    ModuleHelper::WireWrite(MODULE_TIME_DSPL, sizeof(warp_active), &warp_active);
 }
