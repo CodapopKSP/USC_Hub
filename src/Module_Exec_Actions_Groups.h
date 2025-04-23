@@ -9,13 +9,13 @@
 enum struct ExecActionsGroupsModuleFlags : byte
 {
     None = 0,
-    Stage = 1 << 0,
-    Abort = 1 << 1,
-    ag1 = 1 << 2,
-    ag2 = 1 << 3,
-    ag3 = 1 << 4,
-    ag4 = 1 << 5,
-    ag5 = 1 << 6,   
+    ag1 = 1 << 0,
+    ag2 = 1 << 1,
+    ag3 = 1 << 2,
+    ag4 = 1 << 3,
+    ag5 = 1 << 4,
+    Stage = 1 << 5,
+    Abort = 1 << 6,   
 };
 
 class ExecActionsGroupsModule : public ModuleBase,

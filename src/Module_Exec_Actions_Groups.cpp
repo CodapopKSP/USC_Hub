@@ -7,7 +7,7 @@
 #define MODULE_EXEC_ACTION_GROUPS_CTRL 16
 #define MODULE_EXEC_ACTION_GROUPS_DSPL 17
 
-const byte PROGMEM ExecActionsGroupsModule::EXEC_ACTION_GROUP_BITS_MAP[10] = { 1, 6, 2, 7, 3, 8, 4, 9, 5, 10 };
+const byte PROGMEM ExecActionsGroupsModule::EXEC_ACTION_GROUP_BITS_MAP[10] = { 1, 2, 3, 4, 5 };
 
 DECLARE_ENUM_BITWISE_OPERATORS(ExecActionsGroupsModuleFlags, byte)
 
@@ -63,11 +63,38 @@ void ExecActionsGroupsModule::_update(Simpit *simpit)
        delay(50);
        KerbalSimpitHelper::SetAction(ActionGroupFlags::Abort, false); // Not sure this is needed, but it was bugging me
     }
-    
+
     if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag1))
     {
         Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
-        toggle.GroupIds[1] = 1;
+        toggle.GroupIds[0] = 1;
+        // Broadcast the flipped bits directly through simpit
+        simpit->WriteOutgoing(toggle);
+    }
+    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag2))
+    {
+        Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
+        toggle.GroupIds[0] = 2;
+        // Broadcast the flipped bits directly through simpit
+        simpit->WriteOutgoing(toggle);
+    }
+    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag3))
+    {
+        Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
+        toggle.GroupIds[0] = 3;
+        // Broadcast the flipped bits directly through simpit
+        simpit->WriteOutgoing(toggle);
+    }
+    if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag4))
+    {
+        Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
+        toggle.GroupIds[0] = 4;
+        // Broadcast the flipped bits directly through simpit
+        simpit->WriteOutgoing(toggle);
+    }if(BitHelper::FlagTriggered(this->flags, latest_flags, ExecActionsGroupsModuleFlags::ag5))
+    {
+        Vessel::Outgoing::CustomActionGroupToggle toggle = Vessel::Outgoing::CustomActionGroupToggle();
+        toggle.GroupIds[0] = 5;
         // Broadcast the flipped bits directly through simpit
         simpit->WriteOutgoing(toggle);
     }
@@ -79,8 +106,8 @@ void ExecActionsGroupsModule::_update(Simpit *simpit)
 
 void ExecActionsGroupsModule::Process(void *sender, Vessel::Incoming::CustomActionGroups *data)
 {
-    uint16_t bits_simpit = ((uint16_t*)&data->Status)[0]; // Read first 16 CAG bits (only 10 are used)
-    uint16_t bits_display = 0x0;
+    uint8_t bits_simpit = ((uint8_t*)&data->Status)[0]; // Read first 16 CAG bits (only 10 are used)
+    uint8_t bits_display = 0x0;
 
     // Iterate through the first 10 bits, converting them to a valid dspl object
     // High level - simpit group id bits must be mapped to hardware id bits
@@ -88,7 +115,7 @@ void ExecActionsGroupsModule::Process(void *sender, Vessel::Incoming::CustomActi
     // For a clear understanding of the hardware <-> software need for this
     // Look in misc/action_group_wiring.png
 
-    for(int i=0; i<10; i++)
+    for(int i=0; i<7; i++)
     {
         // Ensure bit id is mapped to the corrent action group id
         byte mapped_bit_index = pgm_read_byte(this->EXEC_ACTION_GROUP_BITS_MAP + i);
@@ -99,5 +126,5 @@ void ExecActionsGroupsModule::Process(void *sender, Vessel::Incoming::CustomActi
     }
 
     // Transmit updated, mapped bits_display to module
-    ModuleHelper::WireWrite(MODULE_EXEC_ACTION_GROUPS_DSPL, sizeof(uint16_t), &bits_display);
+    ModuleHelper::WireWrite(MODULE_EXEC_ACTION_GROUPS_DSPL, sizeof(uint8_t), &bits_display);
 }
