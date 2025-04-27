@@ -288,7 +288,7 @@ void draw_spash_screen()
   u8g2.drawXBMP(0, 0, 51, 63, epd_bitmap_SplashKSPLogo);
 
   u8g2.setFont(u8g2_font_10x20_tr);
-  draw_string("UntitledSpaceCraft_OS", 88, 15, true);
+  draw_string("USC_OS", 88, 15, true);
 
   u8g2.setFont(u8g2_font_4x6_tr);
   draw_string(message, 60, 35, false);
@@ -305,11 +305,6 @@ void draw_spash_screen()
 
 void draw_no_signal_screen()
 {
-  int earthStep = (frame / 5) % epd_bitmap_Earth_allArray_LEN;
-  u8g2.drawXBMP(72, 8, 48, 48, epd_bitmap_Earth_allArray[earthStep]);
-  u8g2.setFont(u8g2_font_10x20_tr);
-  draw_string("No", 34, 31, true);
-  draw_string("Signal", 34, 45, true);
 }
 
 void draw_fuel_screen(TelemetryModuleFuelData fuel_data)
